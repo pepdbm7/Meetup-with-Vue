@@ -1,41 +1,35 @@
 <template>
-  <v-app dark class="app">
+  <v-app dark>
     <!-- Side Menu: -->
-    <v-navigation-drawer temporary v-model="sideNav">
+    <v-navigation-drawer temporary v-model="sideNav" app>
       <v-list>
-        <v-list-tile
-          v-for="{icon, description, link} in menuItems"
-          :key="description"
-          router
-          :to="link"
-        >
+        <v-list-tile v-for="{icon, description, link} in menuItems" :key="description" :to="link">
           <v-list-tile-action>
-            <v-icon>{{icon}}</v-icon>
+            <v-icon>{{ icon }}</v-icon>
           </v-list-tile-action>
-          <v-list-tile-content>{{description}}</v-list-tile-content>
+
+          <v-list-tile-content>
+            <v-list-tile-title>{{ description }}</v-list-tile-title>
+          </v-list-tile-content>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+
     <!-- main navbar: -->
-    <v-toolbar scroll-off-screen dark class="navbar">
-      <v-toolbar-side-icon @click.native="sideNav = !sideNav" class="hidden-sm-and-up"></v-toolbar-side-icon>
+    <v-toolbar class="navbar">
+      <v-toolbar-side-icon class="white--text" @click="sideNav = !sideNav"></v-toolbar-side-icon>
       <v-toolbar-title>
         <router-link to="/" tag="span" class="navbar-title">Meetup App</router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-xs-only">
-        <v-btn
-          flat
-          v-for="{icon, description, link} in menuItems"
-          :key="description"
-          router
-          :to="link"
-        >
+        <v-btn flat v-for="{icon, description, link} in menuItems" :key="description" :to="link">
           <v-icon left>s{{icon}}</v-icon>
           {{description}}
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
+
     <main>
       <router-view></router-view>
     </main>
@@ -63,18 +57,3 @@ export default {
   }
 };
 </script>
-
-
-<style scope lang="scss">
-$primary: red;
-
-.app {
-  color: $primary;
-}
-.navbar {
-  background: orange;
-}
-.navbar-title {
-  cursor: pointer;
-}
-</style>

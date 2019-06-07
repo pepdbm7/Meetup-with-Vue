@@ -1,11 +1,11 @@
-$primary: #fbb069;
+$primary: red;
 
 .app {
-  color: $primary;
+  color: $primary !important;
 }
 .navbar {
-  background: orange;
+  background: hsl(81, 97%, 47%) !important;
 }
-.navbar-tile {
+.navbar-title {
   cursor: pointer;
 }
