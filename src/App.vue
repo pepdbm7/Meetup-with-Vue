@@ -1,27 +1,38 @@
 <template>
   <v-app dark class="app">
-    <!-- side navbar: -->
-    <v-navigation-drawer v-model="sideNav">
+    <!-- Side Menu: -->
+    <v-navigation-drawer temporary v-model="sideNav">
       <v-list>
-        <v-list-title v-for="(item, i) in menuItems" :key="i" router :to="item.link">
-          <v-list-title-action>
-            <v-icon>{{item.icon}}</v-icon>
-          </v-list-title-action>
-          <v-list-title-content>{{item.description}}</v-list-title-content>
-        </v-list-title>
+        <v-list-tile
+          v-for="{icon, description, link} in menuItems"
+          :key="description"
+          router
+          :to="link"
+        >
+          <v-list-tile-action>
+            <v-icon>{{icon}}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>{{description}}</v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <!-- main navbar: -->
-    <v-toolbar dark class="navbar">
+    <v-toolbar scroll-off-screen dark class="navbar">
       <v-toolbar-side-icon @click.native="sideNav = !sideNav" class="hidden-sm-and-up"></v-toolbar-side-icon>
       <v-toolbar-title>
-        <router-link to="/" tag="span" class="nav-title">Meetup</router-link>
+        <router-link to="/" tag="span" class="navbar-title">Meetup App</router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-xs-only">
-        <v-btn flat v-for="(item, i) in menuItems" :key="i" router :to="item.link">
-          <v-icon left>s{{item.icon}}</v-icon>
-          {{item.description}}
+        <v-btn
+          flat
+          v-for="{icon, description, link} in menuItems"
+          :key="description"
+          router
+          :to="link"
+        >
+          <v-icon left>s{{icon}}</v-icon>
+          {{description}}
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
@@ -54,8 +65,8 @@ export default {
 </script>
 
 
-<style lang="scss">
-@import "./styles/styles";
+<style scope lang="scss">
+$primary: red;
 
 .app {
   color: $primary;
