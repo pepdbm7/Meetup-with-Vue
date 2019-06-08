@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="container">
     <v-layout row wrap>
       <v-flex xs12 sm6 class="text-xs-center text-sm-right">
         <v-btn large router to="/meetups">Explore Meetups</v-btn>
@@ -8,13 +8,24 @@
         <v-btn large router to="/meetup/new">Organize Meetup</v-btn>
       </v-flex>
     </v-layout>
-    <v-layout row wrap>
+    <v-layout row wrap class="mt-4">
       <v-flex xs12>
-        <v-carousel>
-          <v-carousel-item v-for="{src, title, id} in meetups" v-bind:src="src" :key="id">
+        <v-carousel class="carousel-container">
+          <v-carousel-item
+            v-for="{src, title, id} in meetups"
+            v-bind:src="src"
+            :key="id"
+            class="carousel-item"
+            @click="goToMeetup(id)"
+          >
             <div class="title">{{title}}</div>
           </v-carousel-item>
         </v-carousel>
+      </v-flex>
+    </v-layout>
+    <v-layout class="mt-4">
+      <v-flex xs12 class="text-xs-center">
+        <p>Join us!!</p>
       </v-flex>
     </v-layout>
   </v-container>
@@ -39,16 +50,32 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    goToMeetup(id) {
+      //onclick on carousel image:
+      this.$router.push(`/meetups/${id}`);
+    }
   }
 };
 </script>
 
 <style scope>
+.container {
+  height: 200vh;
+}
+.carousel-container {
+  cursor: pointer;
+}
+.carousel-item {
+  display: flex;
+  justify-content: center;
+}
 .title {
-  position: absolute;
-  bottom: 50px;
-  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
   font-size: 2em;
-  padding: 10px;
+  padding: 20px;
 }
 </style>
