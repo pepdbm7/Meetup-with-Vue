@@ -13,10 +13,10 @@
         <v-carousel class="carousel-container">
           <v-carousel-item
             v-for="{src, title, id} in meetups"
-            v-bind:src="src"
+            :src="src"
             :key="id"
-            class="carousel-item"
             @click="goToMeetup(id)"
+            class="carousel-item"
           >
             <div class="title">{{title}}</div>
           </v-carousel-item>
@@ -33,23 +33,10 @@
 
 <script>
 export default {
-  data() {
-    return {
-      meetups: [
-        {
-          src:
-            "https://blog.headout.com/wp-content/uploads/2016/07/NYC-770x514.jpg",
-          id: "1",
-          title: "Meetup in NYC"
-        },
-        {
-          src:
-            "https://www.upsuitesbcn.com/wp-content/uploads/2019/03/barcelona-1.jpg",
-          id: "2",
-          title: "Meetup in Barcelona"
-        }
-      ]
-    };
+  computed: {
+    meetups() {
+      return this.$store.getters.getSomeMeetups;
+    }
   },
   methods: {
     goToMeetup(id) {

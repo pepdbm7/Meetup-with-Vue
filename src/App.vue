@@ -48,7 +48,7 @@ export default {
           description: "View Meetups",
           link: "/meetups"
         },
-        { icon: "room", description: "Organize Meetup", link: "/new" },
+        { icon: "room", description: "Organize Meetup", link: "/meetup/new" },
         { icon: "person", description: "Profile", link: "/profile" },
         { icon: "face", description: "Sign up", link: "/signup" },
         { icon: "lock_open", description: "Sign in", link: "/signin" }
