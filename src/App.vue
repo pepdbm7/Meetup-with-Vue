@@ -16,7 +16,7 @@
     </v-navigation-drawer>
 
     <!-- main navbar: -->
-    <v-toolbar class="navbar">
+    <v-toolbar color="primary">
       <v-toolbar-side-icon @click.stop="sideNav = !sideNav" class="hidden-sm-and-up"></v-toolbar-side-icon>
       <v-toolbar-title>
         <router-link to="/" tag="span" class="navbar-title">Meetup App</router-link>

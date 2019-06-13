@@ -1,11 +1,11 @@
 <template>
-  <v-container class="container">
+  <v-container class="container home-container">
     <v-layout row wrap>
       <v-flex xs12 sm6 class="text-xs-center text-sm-right">
-        <v-btn large router to="/meetups">Explore Meetups</v-btn>
+        <v-btn large color="secondary" router to="/meetups">Explore Meetups</v-btn>
       </v-flex>
       <v-flex xs12 sm6 class="text-xs-center text-sm-left">
-        <v-btn large router to="/meetup/new">Organize Meetup</v-btn>
+        <v-btn large color="secondary" router to="/meetup/new">Organize Meetup</v-btn>
       </v-flex>
     </v-layout>
     <v-layout row wrap class="mt-4">
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style scope>
-.container {
+.home-container {
   height: 200vh;
 }
 .carousel-container {

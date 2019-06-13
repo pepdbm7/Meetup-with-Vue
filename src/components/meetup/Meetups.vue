@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-layout row wrap v-for="{id, src, title, date} in meetups" :key="id" class="mb-2">
-      <v-flex xs12>
-        <v-card>
+      <v-flex xs12 sm10 md8 offset-sm1 offset-md2>
+        <v-card color="primary">
           <v-container fluid>
-            <v-layout row wrap>
+            <v-layout row>
               <v-flex xs5 sm4 md3>
                 <v-img :src="src" height="130px"></v-img>
               </v-flex>
@@ -12,7 +12,7 @@
                 <v-card-title primary-title>
                   <div>
                     <h4>{{title}}</h4>
-                    <div>{{ date }}</div>
+                    <div>{{ date | filteredDate }}</div>
                   </div>
                 </v-card-title>
 

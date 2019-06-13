@@ -1,10 +1,7 @@
-$primary: red;
+$secondary: hsl(86, 97%, 35%);
 
-.app {
-  color: $primary !important;
-}
-.navbar {
-  background: hsl(81, 97%, 47%) !important;
+.meetups-card {
+  background: $secondary !important;
 }
 .navbar-title {
   cursor: pointer;
