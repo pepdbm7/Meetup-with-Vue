@@ -1,4 +1,3 @@
-require("dotenv");
 const express = require("express");
 const app = express.Router();
 const cors = require("cors");
@@ -8,4 +7,19 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 app.use(cors());
 
-process.env.SECRET_KEY = "secret";
+const secret = process.env.SECRET_KEY;
+
+app.post(
+  "/register",
+  async ({ username, email, password, city, avatar, joinDate }, res) => {
+    const today = new Date();
+    const userData = {
+      username,
+      email,
+      password,
+      city,
+      avatar,
+      joinDate
+    };
+  }
+);

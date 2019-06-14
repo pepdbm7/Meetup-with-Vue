@@ -41,19 +41,34 @@ import "./styles/styles.scss";
 export default {
   data() {
     return {
-      sideNav: false,
-      menuItems: [
-        {
-          icon: "supervisor_account",
-          description: "View Meetups",
-          link: "/meetups"
-        },
-        { icon: "room", description: "Organize Meetup", link: "/meetup/new" },
-        { icon: "person", description: "Profile", link: "/profile" },
+      sideNav: false
+    };
+  },
+  computed: {
+    menuItems() {
+      let menuItems = [
         { icon: "face", description: "Sign up", link: "/signup" },
         { icon: "lock_open", description: "Sign in", link: "/signin" }
-      ]
-    };
+      ];
+
+      if (this.userIsAuthenticated) {
+        menuItems = [
+          {
+            icon: "supervisor_account",
+            description: "View Meetups",
+            link: "/meetups"
+          },
+          { icon: "room", description: "Organize Meetup", link: "/meetup/new" },
+          { icon: "person", description: "Profile", link: "/profile" }
+        ];
+      }
+    },
+    userIsAuthenticated() {
+      return (
+        this.$store.getters.user !== null &&
+        this.$store.geters.user !== undefined
+      );
+    }
   }
 };
 </script>

@@ -27,12 +27,23 @@ export const store = new Vuex.Store({
           "very cool meetup with cool people talking about their cool lives"
       }
     ],
-    user: { id: "asdfa", registeredMeetups: ["jvñlkasj", "vas"] }
+    user: { id: "asdfa", registeredMeetups: ["jvñlkasj", "vas"] },
+    error: null,
+    loading: false
   },
   mutations: {
     //to change the state:
     createMeetup({ allMeetups }, payload) {
       allMeetups.push(payload);
+    },
+    setError: (state, payload) => {
+      state.error = payload;
+    },
+    clearError: ({ error }) => {
+      error = null;
+    },
+    setLoading: (state, payload) => {
+      state.loading = payload;
     }
   },
   actions: {
@@ -48,6 +59,40 @@ export const store = new Vuex.Store({
       };
       // store it into the DB
       context.commit("createMeetup", newMeetup);
+    },
+    signUp: async ({ commit }, { username, email, password, city, avatar }) => {
+      try {
+        commit("clearError");
+        commit("setLoading", true);
+        //check if email or username already exist:
+        const isUsedEmail = await User.findOne({ email });
+        if (isUsedEmail) throw new Error("This email is already used!");
+        const isUsedUsername = await User.findOne({ username });
+        if (isUsedUsername) throw new Error("This username is already used");
+
+        const newUser = await new User({
+          username,
+          email,
+          password,
+          city,
+          avatar
+        });
+
+        await newUser.save();
+      } catch (err) {
+        commit("setLoading", false);
+        commit("setError", error);
+        console.log(err);
+      }
+    },
+    signIn({ commit }, payload) {
+      try {
+        commit("clearError");
+        commit("setLoading", true);
+        console.log("sending user data to db!");
+      } catch (err) {
+        console.log(err);
+      }
     }
   },
   getters: {
@@ -63,6 +108,9 @@ export const store = new Vuex.Store({
     getAMeetup({ allMeetups }) {
       //get a meetup by Id
       return meetupId => allMeetups.find(m => m.id === meetupId);
-    }
+    },
+    getUser: ({ user }) => user,
+    error: ({ error }) => error,
+    loading: ({ loading }) => loading
   }
 });
