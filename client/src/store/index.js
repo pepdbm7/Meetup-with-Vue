@@ -1,6 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+// require("dotenv").config();
+const { MONGO_URL } = process.env;
+
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -60,36 +63,54 @@ export const store = new Vuex.Store({
       // store it into the DB
       context.commit("createMeetup", newMeetup);
     },
-    signUp: async ({ commit }, { username, email, password, city, avatar }) => {
+    signUp: async ({ commit }, user) => {
+      console.log("this is commit:", commit);
       try {
         commit("clearError");
         commit("setLoading", true);
-        //check if email or username already exist:
-        const isUsedEmail = await User.findOne({ email });
-        if (isUsedEmail) throw new Error("This email is already used!");
-        const isUsedUsername = await User.findOne({ username });
-        if (isUsedUsername) throw new Error("This username is already used");
 
-        const newUser = await new User({
-          username,
-          email,
-          password,
-          city,
-          avatar
-        });
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+        };
 
-        await newUser.save();
+        return fetch(`${MONGO_URL}/users/signup`, requestOptions);
+
+        // //this is for server side routes:
+        // //check if email or username already exist:
+        // const isUsedEmail = await User.findOne({ email });
+        // if (isUsedEmail) throw new Error("This email is already used!");
+        // const isUsedUsername = await User.findOne({ username });
+        // if (isUsedUsername) throw new Error("This username is already used");
+        // const newUser = await new User({
+        //   username,
+        //   email,
+        //   password,
+        //   city,
+        //   avatar
+        // });
+
+        // await newUser.save();
       } catch (err) {
         commit("setLoading", false);
         commit("setError", error);
         console.log(err);
       }
     },
-    signIn({ commit }, payload) {
+    signIn: async ({ commit }, credentials) => {
       try {
         commit("clearError");
         commit("setLoading", true);
-        console.log("sending user data to db!");
+
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials)
+        };
+        const fetch = await fetch(`${MONGO_URL}/users/signin`, requestOptions);
+
+        console.log("sending user data to our server!");
       } catch (err) {
         console.log(err);
       }

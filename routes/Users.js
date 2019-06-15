@@ -10,7 +10,7 @@ app.use(cors());
 const secret = process.env.SECRET_KEY;
 
 app.post(
-  "/register",
+  "/signup",
   async ({ username, email, password, city, avatar, joinDate }, res) => {
     const today = new Date();
     const userData = {
@@ -19,7 +19,7 @@ app.post(
       password,
       city,
       avatar,
-      joinDate
+      joinDate: today
     };
   }
 );

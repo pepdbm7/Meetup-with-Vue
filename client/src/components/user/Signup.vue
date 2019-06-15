@@ -20,7 +20,7 @@
                       name="username"
                       label="Username"
                       id="username"
-                      v-model="username"
+                      v-model="user.username"
                       type="username"
                       required
                     ></v-text-field>
@@ -33,7 +33,7 @@
                       name="email"
                       label="Email"
                       id="email"
-                      v-model="email"
+                      v-model="user.email"
                       type="email"
                       required
                     ></v-text-field>
@@ -45,7 +45,7 @@
                       name="password"
                       label="Password"
                       id="password"
-                      v-model="password"
+                      v-model="user.password"
                       type="password"
                       required
                     ></v-text-field>
@@ -57,7 +57,7 @@
                       name="city"
                       label="City"
                       id="city"
-                      v-model="city"
+                      v-model="user.city"
                       type="city"
                       required
                     ></v-text-field>
@@ -69,7 +69,7 @@
                       name="avatar"
                       label="Picture"
                       id="avatar"
-                      v-model="avatar"
+                      v-model="user.avatar"
                       type="avatar"
                       required
                     ></v-text-field>
@@ -90,15 +90,19 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 export default {
   data() {
     return {
+      user: {
+        username: "",
+        email: "",
+        password: "",
+        city: "",
+        avatar: ""
+      },
       isValidForm: true,
-      username: "",
-      email: "",
-      password: "",
-      city: "",
-      avatar: "",
       emailRules: [
         email => !!email || "Email is empty",
         email => /.@+./.test(email) || "Please use a valid email"
@@ -119,16 +123,12 @@ export default {
     }
   },
   methods: {
-    onSignup() {
-      if (this.$refs.form.validate())
-        //validate() method returns true when all fields are valid
-        this.$store.dispatch("signUp", {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-          city: this.city,
-          avatar: this.avatar
-        });
+    ...mapActions(["signUp"]),
+    onSignup: () => {
+      //validate() method returns true when all fields are valid:
+      if (this.$refs.form.validate()) {
+        this.signUp(this.user);
+      }
     }
   }
 };
