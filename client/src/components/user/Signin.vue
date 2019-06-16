@@ -9,11 +9,11 @@
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field
-                      name="email"
-                      label="Mail"
-                      id="email"
-                      v-model="email"
-                      type="email"
+                      name="username"
+                      label="Username"
+                      id="username"
+                      v-model="username"
+                      type="username"
                       required
                     ></v-text-field>
                   </v-flex>
@@ -48,7 +48,7 @@
 export default {
   data() {
     return {
-      email: "",
+      username: "",
       password: ""
     };
   },
@@ -67,7 +67,7 @@ export default {
   methods: {
     onSignin() {
       this.$store.dispatch("signIn", {
-        email: this.email,
+        username: this.username,
         password: this.password
       });
     }
