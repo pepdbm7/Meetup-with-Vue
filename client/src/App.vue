@@ -51,7 +51,7 @@ export default {
         { icon: "lock_open", description: "Sign in", link: "/signin" }
       ];
 
-      if (this.userIsAuthenticated) {
+      if (this.loggedIn) {
         menuItems = [
           {
             icon: "supervisor_account",
@@ -62,12 +62,10 @@ export default {
           { icon: "person", description: "Profile", link: "/profile" }
         ];
       }
+      return menuItems;
     },
-    userIsAuthenticated() {
-      return (
-        this.$store.getters.user !== null &&
-        this.$store.geters.user !== undefined
-      );
+    loggedIn() {
+      return this.$store.getters.loggedIn;
     }
   }
 };

@@ -5,38 +5,43 @@ const Comment = require("./models/Comment");
 
 //packages:
 const express = require("express");
-var app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 var bodyParser = require("body-parser");
 const package = require("./package.json");
-const router = require("./routes");
+const router = require("./routes/Users");
 
 //environment variables:
 require("dotenv").config();
-const { PORT, MONGO_URL, SECRET_KEY } = process.env;
+const {
+  env: { PORT, MONGO_URL, SECRET_KEY }
+} = process;
 
-// Connect with our DB on mlab:
+//initialize a server:
+var app = express();
+
+// Connecting to DB:
 mongoose
   .connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true })
-  .then(() => {
-    console.log(`database server running at ${MONGO_URL}`);
+  .then(() => console.log("Success connected to database"));
 
-    const port = PORT || 8080;
+//middleware:
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
+app.use(cors());
 
-    app.use(bodyParser.json());
-    app.use(cors());
-    app.use(
-      bodyParser.urlencoded({
-        extended: false
-      })
-    );
+//routes:
+app.use("/", router);
 
-    app.use("/routes", router);
+const port = PORT || 8080;
 
-    app.listen(port, () =>
-      console.log(
-        `${package.name} ${package.version} up and running on port ${port}`
-      )
-    );
-  });
+//listens connection on port:
+app.listen(port, () =>
+  console.log(
+    `${package.name} ${package.version} up and running on port ${port}`
+  )
+);

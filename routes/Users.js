@@ -1,25 +1,21 @@
 const express = require("express");
-const app = express.Router();
-const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 
-const User = require("../models/User");
-app.use(cors());
-
+//helpers:
+// const User = require("../models/User");
 const secret = process.env.SECRET_KEY;
+const userLogic = require("../logic_routes/User");
 
-app.post(
-  "/signup",
-  async ({ username, email, password, city, avatar, joinDate }, res) => {
-    const today = new Date();
-    const userData = {
-      username,
-      email,
-      password,
-      city,
-      avatar,
-      joinDate: today
-    };
-  }
-);
+//initialize router:
+const router = express.Router();
+
+router.post("/signup", (req, res) => {
+  return userLogic
+    .registerUser(req.body)
+    .then(() =>
+      res.json({ message: `${req.body.username} successfully registered` })
+    )
+    .catch(err => console.log(err));
+});
+
+module.exports = router;

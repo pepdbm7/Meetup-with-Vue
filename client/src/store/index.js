@@ -1,10 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-// require("dotenv").config();
-const { MONGO_URL } = process.env;
-
 Vue.use(Vuex);
+
+const url = "http://localhost:5000/api";
 
 export const store = new Vuex.Store({
   state: {
@@ -30,9 +29,11 @@ export const store = new Vuex.Store({
           "very cool meetup with cool people talking about their cool lives"
       }
     ],
-    user: { id: "asdfa", registeredMeetups: ["jvñlkasj", "vas"] },
+    user: null,
     error: null,
-    loading: false
+    loading: false,
+    userId: sessionStorage.getItem("userId") || null,
+    token: sessionStorage.getItem("token") || null
   },
   mutations: {
     //to change the state:
@@ -63,57 +64,48 @@ export const store = new Vuex.Store({
       // store it into the DB
       context.commit("createMeetup", newMeetup);
     },
-    signUp: async ({ commit }, user) => {
+    signUp({ commit }, user) {
       console.log("this is commit:", commit);
-      try {
-        commit("clearError");
-        commit("setLoading", true);
+      commit("clearError");
+      commit("setLoading", true);
 
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user)
-        };
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify(user)
+      };
 
-        return fetch(`${MONGO_URL}/users/signup`, requestOptions);
-
-        // //this is for server side routes:
-        // //check if email or username already exist:
-        // const isUsedEmail = await User.findOne({ email });
-        // if (isUsedEmail) throw new Error("This email is already used!");
-        // const isUsedUsername = await User.findOne({ username });
-        // if (isUsedUsername) throw new Error("This username is already used");
-        // const newUser = await new User({
-        //   username,
-        //   email,
-        //   password,
-        //   city,
-        //   avatar
-        // });
-
-        // await newUser.save();
-      } catch (err) {
-        commit("setLoading", false);
-        commit("setError", error);
-        console.log(err);
-      }
+      return fetch(`${url}/signup`, requestOptions)
+        .then(res => res.json())
+        .catch(err => console.log(err));
     },
-    signIn: async ({ commit }, credentials) => {
-      try {
-        commit("clearError");
-        commit("setLoading", true);
+    signIn({ commit }, credentials) {
+      commit("clearError");
+      commit("setLoading", true);
 
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials)
-        };
-        const fetch = await fetch(`${MONGO_URL}/users/signin`, requestOptions);
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify(credentials)
+      };
 
-        console.log("sending user data to our server!");
-      } catch (err) {
-        console.log(err);
-      }
+      return fetch(`${url}/signin`, requestOptions)
+        .then(res => res.json())
+        .then(res => {
+          if (res.error) throw Error(res.error);
+          const { id, token } = res.data;
+          this.userId = id;
+          this.token = token;
+          sessionStorage.setItem("userId", id);
+          sessionStorage.setItem("token", token);
+        });
+    },
+    logout() {
+      this.userId = null;
+      this.token = null;
+
+      sessionStorage.removeItem("userId");
+      sessionStorage.removeItem("token");
     }
   },
   getters: {
@@ -132,6 +124,7 @@ export const store = new Vuex.Store({
     },
     getUser: ({ user }) => user,
     error: ({ error }) => error,
-    loading: ({ loading }) => loading
+    loading: ({ loading }) => loading,
+    loggedIn: ({ userId }) => !!userId
   }
 });
