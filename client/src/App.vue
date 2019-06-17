@@ -51,7 +51,7 @@ export default {
         { icon: "lock_open", description: "Sign in", link: "/signin" }
       ];
 
-      if (this.loggedIn) {
+      if (this.loggedIn === "undefined") {
         menuItems = [
           {
             icon: "supervisor_account",

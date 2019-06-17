@@ -3,7 +3,7 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const url = "http://localhost:5000/api";
+const url = "http://localhost:5000";
 
 export const store = new Vuex.Store({
   state: {
@@ -40,15 +40,9 @@ export const store = new Vuex.Store({
     createMeetup({ allMeetups }, payload) {
       allMeetups.push(payload);
     },
-    setError: (state, payload) => {
-      state.error = payload;
-    },
-    clearError: ({ error }) => {
-      error = null;
-    },
-    setLoading: (state, payload) => {
-      state.loading = payload;
-    }
+    setError: (state, payload) => (state.error = payload),
+    clearError: state => (state.error = null),
+    setLoading: (state, payload) => (state.loading = payload)
   },
   actions: {
     //to commit the mutations
@@ -65,7 +59,6 @@ export const store = new Vuex.Store({
       context.commit("createMeetup", newMeetup);
     },
     signUp({ commit }, user) {
-      console.log("this is commit:", commit);
       commit("clearError");
       commit("setLoading", true);
 
@@ -76,9 +69,19 @@ export const store = new Vuex.Store({
       };
 
       return fetch(`${url}/signup`, requestOptions)
-        .then(res => res.json())
-        .catch(err => console.log(err));
+        .then(res => {
+          commit("setLoading", false);
+          return res.json();
+        })
+        .then(res => {
+          //error message
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+          console.log(res); // TODO: handle success message
+        });
     },
+
     signIn({ commit }, credentials) {
       commit("clearError");
       commit("setLoading", true);
@@ -90,12 +93,22 @@ export const store = new Vuex.Store({
       };
 
       return fetch(`${url}/signin`, requestOptions)
-        .then(res => res.json())
         .then(res => {
-          if (res.error) throw Error(res.error);
+          commit("setLoading", false);
+          return res.json();
+        })
+        .then(res => {
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+          console.log(res);
           const { id, token } = res.data;
-          this.userId = id;
-          this.token = token;
+
+          //storing id and token in our global state of vuex:
+          // this.userId = id;
+          // this.token = token;
+
+          //storing id and token in sessionstorage:
           sessionStorage.setItem("userId", id);
           sessionStorage.setItem("token", token);
         });
@@ -106,6 +119,9 @@ export const store = new Vuex.Store({
 
       sessionStorage.removeItem("userId");
       sessionStorage.removeItem("token");
+    },
+    clearError({ commit }) {
+      commit("clearError");
     }
   },
   getters: {
@@ -123,7 +139,7 @@ export const store = new Vuex.Store({
       return meetupId => allMeetups.find(m => m.id === meetupId);
     },
     getUser: ({ user }) => user,
-    error: ({ error }) => error,
+    getError: ({ error }) => error,
     loading: ({ loading }) => loading,
     loggedIn: ({ userId }) => !!userId
   }

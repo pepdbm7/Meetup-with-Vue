@@ -1,19 +1,19 @@
-
-  <template>
+<template>
   <v-container>
-    <!-- error message: -->
-    <v-layout row wrap v-if="error">
+    <!-- error component; binded to getter truethy-ness: -->
+    <v-layout row v-if="getError">
       <v-flex xs12 sm6 offset-sm3>
-        <form-alert :message="error.message"></form-alert>
+        <app-alert @dismissed="onDismissed" :text="getError"></app-alert>
       </v-flex>
     </v-layout>
+
     <!-- formular: -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-card>
           <v-card-text>
             <v-container>
-              <v-form v-model="isValidForm" ref="form" @submit.prevent="onSignin">
+              <v-form v-model="isValidForm" ref="registerForm" @submit.prevent="onSignup">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field
@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapGetters, mapState, mapActions } from "vuex";
 
 export default {
   data() {
@@ -110,12 +110,11 @@ export default {
     };
   },
   computed: {
-    user() {
-      return this.$store.getters.getUser;
-    }
+    //their values now are available for the component, so we can bind html elements to add behaviour
+    ...mapGetters(["loading", "getUser", "getError"])
   },
   watch: {
-    //if the user in store changes, redirect to home page:
+    //if user already logged in, redirect to home page:
     getUser(value) {
       if (value !== null && value !== undefined) {
         this.$router.push("/");
@@ -124,11 +123,15 @@ export default {
   },
   methods: {
     ...mapActions(["signUp"]),
-    onSignup: () => {
+    onSignup() {
       //validate() method returns true when all fields are valid:
-      if (this.$refs.form.validate()) {
+      if (this.$refs.registerForm.validate()) {
         this.signUp(this.user);
       }
+    },
+    onDismissed() {
+      console.log("alert dismissed");
+      this.$store.dispatch("clearError");
     }
   }
 };

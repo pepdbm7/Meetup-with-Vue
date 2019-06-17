@@ -12,11 +12,12 @@ const logicUser = {
     //check if email or username already exist:
     const usedEmail = await User.findOne({ email });
 
-    if (usedEmail) throw new Error("This email is already used!");
+    if (usedEmail) throw new Error(`The email ${email} is already used!`);
 
     const isUsedUsername = await User.findOne({ username });
 
-    if (isUsedUsername) throw new Error("This username is already used");
+    if (isUsedUsername)
+      throw new Error(`The username ${username} is already used`);
 
     const joinDate = new Date();
     //encrypt password:
@@ -34,7 +35,6 @@ const logicUser = {
     await User.create(newUser);
   },
   async loginUser({ username, password }) {
-    console.log(secret);
     const user = await User.findOne({ username });
 
     if (user && bcrypt.compareSync(password, user.password)) {
@@ -49,7 +49,10 @@ const logicUser = {
 
       if (!token) throw new Error("Couldn't get the user token");
 
-      return await token;
+      return await {
+        id: payload._id,
+        token
+      };
     } else {
       throw new Error("Wrong credentials, try again");
     }

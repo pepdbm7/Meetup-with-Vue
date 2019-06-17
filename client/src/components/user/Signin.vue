@@ -1,18 +1,26 @@
 <template>
   <v-container>
+    <!-- error component; binded to getter truethy-ness: -->
+    <v-layout row v-if="getError">
+      <v-flex xs12 sm6 offset-sm3>
+        <app-alert @dismissed="onDismissed" :text="getError"></app-alert>
+      </v-flex>
+    </v-layout>
+
+    <!-- formular: -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-card>
           <v-card-text>
             <v-container>
-              <form @submit.prevent="onSignin">
+              <v-form v-model="isValidForm" ref="loginForm" @submit.prevent="onSignin">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field
                       name="username"
                       label="Username"
                       id="username"
-                      v-model="username"
+                      v-model="user.username"
                       type="username"
                       required
                     ></v-text-field>
@@ -24,7 +32,7 @@
                       name="password"
                       label="Password"
                       id="password"
-                      v-model="password"
+                      v-model="user.password"
                       type="password"
                       required
                     ></v-text-field>
@@ -35,7 +43,7 @@
                     <v-btn type="submit">Sign in</v-btn>
                   </v-flex>
                 </v-layout>
-              </form>
+              </v-form>
             </v-container>
           </v-card-text>
         </v-card>
@@ -45,20 +53,24 @@
 </template>
 
 <script>
+import { mapGetters, mapState, mapActions } from "vuex";
+
 export default {
   data() {
     return {
-      username: "",
-      password: ""
+      user: {
+        username: "",
+        password: ""
+      },
+      isValidForm: true
     };
   },
   computed: {
-    user() {
-      return this.$store.getters.user;
-    }
+    ...mapGetters(["loading", "getUser", "getError"])
   },
   watch: {
-    user(value) {
+    //if the user in store changes, redirect to home page:
+    getUser(value) {
       if (value !== null && value !== undefined) {
         this.$router.push("/");
       }
@@ -66,10 +78,14 @@ export default {
   },
   methods: {
     onSignin() {
-      this.$store.dispatch("signIn", {
-        username: this.username,
-        password: this.password
-      });
+      //validate() method returns true when all fields are valid:
+      if (this.$refs.loginForm.validate()) {
+        this.$store.dispatch("signIn", this.user);
+      }
+    },
+    onDismissed() {
+      console.log("alert dismissed");
+      this.$store.dispatch("clearError");
     }
   }
 };
