@@ -77,7 +77,12 @@
                 </v-layout>
                 <v-layout row>
                   <v-flex xs12>
-                    <v-btn :disabled="!isValidForm" type="submit">Sign in</v-btn>
+                    <v-btn type="submit" :disabled="loading || !isValidForm" :loading="loading">
+                      Sign up
+                      <span slot="loader" class="custom-loader">
+                        <v-icon light>cached</v-icon>
+                      </span>
+                    </v-btn>
                   </v-flex>
                 </v-layout>
               </v-form>
@@ -130,7 +135,6 @@ export default {
       }
     },
     onDismissed() {
-      console.log("alert dismissed");
       this.$store.dispatch("clearError");
     }
   }

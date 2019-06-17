@@ -42,7 +42,9 @@ export const store = new Vuex.Store({
     },
     setError: (state, payload) => (state.error = payload),
     clearError: state => (state.error = null),
-    setLoading: (state, payload) => (state.loading = payload)
+    setLoading: (state, payload) => (state.loading = payload),
+    setUser: (state, payload) => (state.user = payload),
+    clearUser: state => (state.user = null)
   },
   actions: {
     //to commit the mutations
@@ -58,14 +60,14 @@ export const store = new Vuex.Store({
       // store it into the DB
       context.commit("createMeetup", newMeetup);
     },
-    signUp({ commit }, user) {
+    signUp({ commit }, signupData) {
       commit("clearError");
       commit("setLoading", true);
 
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify(user)
+        body: JSON.stringify(signupData)
       };
 
       return fetch(`${url}/signup`, requestOptions)
@@ -105,17 +107,16 @@ export const store = new Vuex.Store({
           const { id, token } = res.data;
 
           //storing id and token in our global state of vuex:
-          // this.userId = id;
-          // this.token = token;
+          commit("setUser", { id, token });
+          console.log(this.user);
 
           //storing id and token in sessionstorage:
           sessionStorage.setItem("userId", id);
           sessionStorage.setItem("token", token);
         });
     },
-    logout() {
-      this.userId = null;
-      this.token = null;
+    logout({ commit }) {
+      commit("clearUser");
 
       sessionStorage.removeItem("userId");
       sessionStorage.removeItem("token");

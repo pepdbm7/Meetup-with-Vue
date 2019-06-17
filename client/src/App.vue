@@ -51,7 +51,7 @@ export default {
         { icon: "lock_open", description: "Sign in", link: "/signin" }
       ];
 
-      if (this.loggedIn === "undefined") {
+      if (this.loggedIn) {
         menuItems = [
           {
             icon: "supervisor_account",
@@ -65,7 +65,7 @@ export default {
       return menuItems;
     },
     loggedIn() {
-      return this.$store.getters.loggedIn;
+      return this.$store.getters.getUser;
     }
   }
 };
