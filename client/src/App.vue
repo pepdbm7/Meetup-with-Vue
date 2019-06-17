@@ -12,6 +12,12 @@
             <v-list-tile-title>{{ description }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="loggedIn" @click="onLogout">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
 
@@ -26,6 +32,10 @@
         <v-btn flat v-for="{icon, description, link} in menuItems" :key="description" :to="link">
           <v-icon left>s{{icon}}</v-icon>
           {{description}}
+        </v-btn>
+
+        <v-btn v-if="loggedIn" flat @click="onLogout">
+          <v-icon left dark>exit_to_app</v-icon>Logout
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
@@ -66,6 +76,11 @@ export default {
     },
     loggedIn() {
       return this.$store.getters.getUser;
+    }
+  },
+  methods: {
+    onLogout() {
+      this.$store.dispatch("logout");
     }
   }
 };
