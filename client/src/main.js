@@ -15,6 +15,7 @@ new Vue({
   store, //vuex
   render: h => h(App),
   created() {
+    //using lifecycle hook (like react's componentdidmount()), to retrieve data from db:
     this.$store.dispatch("showAllMeetups");
   }
 }).$mount("#app");

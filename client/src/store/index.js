@@ -11,13 +11,13 @@ export default new Vuex.Store({
     user: null,
     error: null,
     loading: false,
-    userId: sessionStorage.getItem("userId") || null,
-    token: sessionStorage.getItem("token") || null
+    userId: localStorage.getItem("userId") || null,
+    token: localStorage.getItem("token") || null
   },
   mutations: {
     //to change the state:
-    setAllMeetups({ allMeetups }, payload) {
-      allMeetups = payload;
+    setAllMeetups(state, payload) {
+      state.allMeetups = payload;
     },
     createMeetup({ allMeetups }, payload) {
       allMeetups.push(payload);
@@ -34,16 +34,20 @@ export default new Vuex.Store({
       const { token } = context.state;
       context.commit("setLoading", true);
 
-      return fetch(`${url}/meetups`, { method: "GET" }).then(res => {
-        //error message
-        if (res.error) {
-          return commit("setError", res.error);
-        }
-        const meetups = res.meetups.json();
-        console.log(meetups);
-        context.commit("setAllMeetups", meetups);
-        context.commit("setLoading", false);
-      });
+      return fetch(`${url}/meetups`, { method: "GET" })
+        .then(res => {
+          console.log(res);
+          //error message
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+          return res.json();
+        })
+        .then(meetups => {
+          console.log(meetups);
+          context.commit("setAllMeetups", meetups);
+          context.commit("setLoading", false);
+        });
     },
 
     createMeetup(context, payload) {
@@ -125,19 +129,18 @@ export default new Vuex.Store({
 
           //storing id and token in our global state of vuex:
           commit("setUser", { id, token });
-          console.log(this.user);
 
-          //storing id and token in sessionstorage:
-          sessionStorage.setItem("userId", id);
-          sessionStorage.setItem("token", token);
+          //storing id and token in localStorage:
+          localStorage.setItem("userId", id);
+          localStorage.setItem("token", token);
         });
     },
 
     logout({ commit }) {
       commit("clearUser");
 
-      sessionStorage.removeItem("userId");
-      sessionStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("token");
     },
 
     clearError({ commit }) {

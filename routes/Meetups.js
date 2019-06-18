@@ -24,7 +24,7 @@ router.post("/meetup/new", (req, res) => {
 router.get("/meetups", (req, res) => {
   return meetupLogic.allMeetups().then(meetups => {
     console.log("meetups", meetups);
-    res.json({ meetups });
+    res.json(meetups);
   });
 });
 

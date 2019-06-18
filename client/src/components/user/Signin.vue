@@ -17,6 +17,7 @@
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field
+                      autofocus
                       name="username"
                       label="Username"
                       id="username"

@@ -16,7 +16,7 @@
       <v-flex xs12 v-if="!loading">
         <v-carousel class="carousel-container">
           <v-carousel-item
-            v-for="{image, title, id} in meetups"
+            v-for="{image, title, id} in getAllMeetups"
             :src="image"
             :key="id"
             @click="goToMeetup(id)"
@@ -36,14 +36,10 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   computed: {
-    meetups() {
-      return this.$store.getters.getSomeMeetups;
-    },
-    loading() {
-      return this.$store.getters.loading;
-    }
+    ...mapGetters(["getAllMeetups", "loading"])
   },
   methods: {
     goToMeetup(id) {
