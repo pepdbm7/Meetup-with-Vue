@@ -6,7 +6,7 @@ const meetupLogic = require("../logic_routes/Meetup");
 
 //initialize router:
 const router = express.Router();
-
+//add new meetup:
 router.post("/meetup/new", (req, res) => {
   console.log(req.body);
   return meetupLogic
@@ -18,6 +18,14 @@ router.post("/meetup/new", (req, res) => {
         error: message
       });
     });
+});
+
+//retrieve all meetups:
+router.get("/meetups", (req, res) => {
+  return meetupLogic.allMeetups().then(meetups => {
+    console.log("meetups", meetups);
+    res.json({ meetups });
+  });
 });
 
 // router.post("/signin", (req, res) => {

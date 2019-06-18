@@ -8,8 +8,12 @@
         <v-btn large color="secondary" router to="/meetup/new">Organize Meetup</v-btn>
       </v-flex>
     </v-layout>
+
     <v-layout row wrap class="mt-4">
-      <v-flex xs12>
+      <v-flex xs12 class="text-xs-center" v-if="loading">
+        <v-progress-circular indeterminate color="primary" :width="7" :size="70"></v-progress-circular>
+      </v-flex>
+      <v-flex xs12 v-if="!loading">
         <v-carousel class="carousel-container">
           <v-carousel-item
             v-for="{image, title, id} in meetups"
@@ -22,11 +26,11 @@
           </v-carousel-item>
         </v-carousel>
       </v-flex>
-    </v-layout>
-    <v-layout class="mt-4">
-      <v-flex xs12 class="text-xs-center">
-        <p>Join us!!</p>
-      </v-flex>
+      <v-layout class="mt-4">
+        <v-flex xs12 class="text-xs-center">
+          <p>Join us!!</p>
+        </v-flex>
+      </v-layout>
     </v-layout>
   </v-container>
 </template>
@@ -36,6 +40,9 @@ export default {
   computed: {
     meetups() {
       return this.$store.getters.getSomeMeetups;
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   },
   methods: {

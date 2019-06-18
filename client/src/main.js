@@ -13,5 +13,8 @@ Vue.component("app-alert", Alert); //so now we can import it to any other compon
 new Vue({
   router,
   store, //vuex
-  render: h => h(App)
+  render: h => h(App),
+  created() {
+    this.$store.dispatch("showAllMeetups");
+  }
 }).$mount("#app");

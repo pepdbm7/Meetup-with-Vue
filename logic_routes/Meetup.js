@@ -17,6 +17,15 @@ const meetupLogic = {
     console.log("meetup: ", meetup);
 
     await Meetup.create(meetup);
+  },
+
+  async allMeetups() {
+    const meetups = await Meetup.find({}, { __v: 0 }); //deleting __v: 0 property set by mongo by default
+    await meetups.forEach(meetup => {
+      meetup.id = meetup._id.toString();
+      delete meetup._id;
+    });
+    return await meetups;
   }
 };
 

@@ -7,28 +7,7 @@ const url = "http://localhost:5000";
 
 export default new Vuex.Store({
   state: {
-    allMeetups: [
-      {
-        id: "1",
-        title: "Meetup in NYC",
-        image:
-          "https://blog.headout.com/wp-content/uploads/2016/07/NYC-770x514.jpg",
-        date: new Date(),
-        location: "NY",
-        description:
-          "very cool meetup with cool people talking about their cool lives"
-      },
-      {
-        id: "2",
-        title: "Meetup in Barcelona",
-        image:
-          "https://www.upsuitesbcn.com/wp-content/uploads/2019/03/barcelona-1.jpg",
-        date: new Date(),
-        location: "Barcelona",
-        description:
-          "very cool meetup with cool people talking about their cool lives"
-      }
-    ],
+    allMeetups: [],
     user: null,
     error: null,
     loading: false,
@@ -37,6 +16,9 @@ export default new Vuex.Store({
   },
   mutations: {
     //to change the state:
+    setAllMeetups({ allMeetups }, payload) {
+      allMeetups = payload;
+    },
     createMeetup({ allMeetups }, payload) {
       allMeetups.push(payload);
     },
@@ -48,10 +30,25 @@ export default new Vuex.Store({
   },
   actions: {
     //to commit the mutations
+    showAllMeetups(context) {
+      const { token } = context.state;
+      context.commit("setLoading", true);
+
+      return fetch(`${url}/meetups`, { method: "GET" }).then(res => {
+        //error message
+        if (res.error) {
+          return commit("setError", res.error);
+        }
+        const meetups = res.meetups.json();
+        console.log(meetups);
+        context.commit("setAllMeetups", meetups);
+        context.commit("setLoading", false);
+      });
+    },
+
     createMeetup(context, payload) {
       //context object exposes same set of methods/properties on the store instance
       const { userId, token } = context.state;
-      console.log("payload", payload);
       const meetupData = {
         title: payload.title,
         location: payload.location,
@@ -59,7 +56,7 @@ export default new Vuex.Store({
         image: payload.image,
         date: payload.date
       };
-      console.log(meetupData);
+
       // store it into the DB
       return fetch(`${url}/meetup/new`, {
         method: "POST",
@@ -70,8 +67,16 @@ export default new Vuex.Store({
         body: JSON.stringify({ userId, meetupData })
       })
         .then(res => res.json())
-        .then(res => context.commit("createMeetup", res));
+        .then(res => context.commit("createMeetup", res))
+        .then(res => {
+          //error message
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+          console.log(res);
+        });
     },
+
     signUp({ commit }, signupData) {
       commit("clearError");
       commit("setLoading", true);
@@ -127,12 +132,14 @@ export default new Vuex.Store({
           sessionStorage.setItem("token", token);
         });
     },
+
     logout({ commit }) {
       commit("clearUser");
 
       sessionStorage.removeItem("userId");
       sessionStorage.removeItem("token");
     },
+
     clearError({ commit }) {
       commit("clearError");
     }
