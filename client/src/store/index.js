@@ -5,13 +5,13 @@ Vue.use(Vuex);
 
 const url = "http://localhost:5000";
 
-export const store = new Vuex.Store({
+export default new Vuex.Store({
   state: {
     allMeetups: [
       {
         id: "1",
         title: "Meetup in NYC",
-        src:
+        image:
           "https://blog.headout.com/wp-content/uploads/2016/07/NYC-770x514.jpg",
         date: new Date(),
         location: "NY",
@@ -21,7 +21,7 @@ export const store = new Vuex.Store({
       {
         id: "2",
         title: "Meetup in Barcelona",
-        src:
+        image:
           "https://www.upsuitesbcn.com/wp-content/uploads/2019/03/barcelona-1.jpg",
         date: new Date(),
         location: "Barcelona",
@@ -50,15 +50,27 @@ export const store = new Vuex.Store({
     //to commit the mutations
     createMeetup(context, payload) {
       //context object exposes same set of methods/properties on the store instance
-      const newMeetup = {
+      const { userId, token } = context.state;
+      console.log("payload", payload);
+      const meetupData = {
         title: payload.title,
         location: payload.location,
         description: payload.description,
-        src: payload.image,
+        image: payload.image,
         date: payload.date
       };
+      console.log(meetupData);
       // store it into the DB
-      context.commit("createMeetup", newMeetup);
+      return fetch(`${url}/meetup/new`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, meetupData })
+      })
+        .then(res => res.json())
+        .then(res => context.commit("createMeetup", res));
     },
     signUp({ commit }, signupData) {
       commit("clearError");

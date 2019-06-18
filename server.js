@@ -9,7 +9,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 var bodyParser = require("body-parser");
 const package = require("./package.json");
-const router = require("./routes/Users");
+const users = require("./routes/Users");
+const meetups = require("./routes/Meetups");
 
 //environment variables:
 require("dotenv").config();
@@ -35,7 +36,8 @@ app.use(
 app.use(cors());
 
 //routes:
-app.use("/", router);
+app.use("/", users);
+app.use("/", meetups);
 
 const port = PORT || 8080;
 

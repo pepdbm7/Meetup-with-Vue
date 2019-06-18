@@ -6,7 +6,7 @@
           <v-card-title>
             <h4>{{meetup.title}}</h4>
           </v-card-title>
-          <v-img :src="meetup.src" height="400px"></v-img>
+          <v-img :src="meetup.image" height="400px"></v-img>
           <v-card-text>
             <div>{{meetup.date | filteredDate}} - {{meetup.location}}</div>
             <div>{{meetup.description}}</div>

@@ -12,8 +12,8 @@
       <v-flex xs12>
         <v-carousel class="carousel-container">
           <v-carousel-item
-            v-for="{src, title, id} in meetups"
-            :src="src"
+            v-for="{image, title, id} in meetups"
+            :src="image"
             :key="id"
             @click="goToMeetup(id)"
             class="carousel-item"

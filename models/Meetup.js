@@ -1,3 +1,5 @@
+//Meetup pep
+
 const {
   Schema,
   model,
@@ -34,10 +36,6 @@ const MeetupSchema = new Schema({
   },
   assistants: {
     type: Array,
-    required: true
-  },
-  tags: {
-    type: String,
     required: true
   }
 });

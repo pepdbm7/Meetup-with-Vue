@@ -94,7 +94,7 @@ export default {
       );
     },
     correctDateAndTime() {
-      const date = new Date(this.date);
+      const date = new Date(this.date); //input value
       if (typeof this.time === "string") {
         let hours = this.time.match(/^(\d+)/)[1];
         const minutes = this.time.match(/:(\d+)/)[1];
@@ -118,7 +118,6 @@ export default {
         image: this.image,
         date: this.correctDateAndTime
       };
-      console.log("from oncreatemeetup");
       this.$store.dispatch("createMeetup", meetupData);
       this.$router.push("/meetups");
     }

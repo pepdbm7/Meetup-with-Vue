@@ -3,7 +3,7 @@ import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 
 Vue.use(Vuetify, {
-  iconfont: "sm",
+  iconfont: "md",
   theme: {
     primary: "#9BEC04",
     secondary: "#75ad06",
@@ -15,6 +15,5 @@ Vue.use(Vuetify, {
   },
   options: {
     customProperties: true
-  },
-  iconfont: "mdi"
+  }
 });
