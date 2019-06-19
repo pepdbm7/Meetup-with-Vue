@@ -27,8 +27,7 @@ const MeetupSchema = new Schema({
   },
   image: {
     type: String,
-    required: false,
-    default: "../assets/people.jpg"
+    required: true
   },
   date: {
     type: Date,

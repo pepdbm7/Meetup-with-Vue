@@ -77,11 +77,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["loading", "getUser", "getError"])
+    ...mapGetters(["loading", "getUserId", "getError"])
   },
   watch: {
     //if the user in store changes, redirect to home page:
-    getUser(value) {
+    getUserId(value) {
       if (value !== null && value !== undefined) {
         this.$router.push("/");
       }

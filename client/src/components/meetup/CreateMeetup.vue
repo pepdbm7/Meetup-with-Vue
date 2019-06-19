@@ -36,21 +36,11 @@
             </v-flex>
           </v-layout>
 
-          <v-layout row>
+          <v-layout row class="my-2">
             <v-flex xs12 sm6 offset-sm3>
-              <v-btn raised class="primary" @click="onPickFile">Upload Image</v-btn>
-              <input
-                type="file"
-                style="display: none"
-                ref="fileInput"
-                accept="image/*"
-                @change="onFilePicked"
-              >
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <img :src="imageUrl" height="150">
+              <v-text-field name="image" label="Image" id="image" v-model="image" required></v-text-field>
+              <!-- to see preview of picture: -->
+              <img :src="image" height="150">
             </v-flex>
           </v-layout>
 
@@ -89,7 +79,6 @@ export default {
       location: "",
       description: "",
       image: "",
-      imageUrl: "",
       date: new Date().toISOString().substr(0, 10),
       minDate: new Date().toISOString().substr(0, 10),
       time: new Date()
@@ -101,12 +90,15 @@ export default {
         !this.title.trim() ||
         !this.location.trim() ||
         !this.description.trim() ||
-        !this.image.trim()
+        !this.date ||
+        !this.time
       );
     },
     correctDateAndTime() {
-      const date = new Date(this.date); //input value
+      //turn date input value to type date:
+      const date = new Date(this.date);
       if (typeof this.time === "string") {
+        //time input value, to tranform it into type date:
         let hours = this.time.match(/^(\d+)/)[1];
         const minutes = this.time.match(/:(\d+)/)[1];
         date.setHours(hours);
@@ -115,7 +107,7 @@ export default {
         date.setHours(this.time.getHours());
         date.setMinutes(this.time.getMinutes());
       }
-      console.log(date);
+
       return date;
     }
   },
@@ -126,29 +118,13 @@ export default {
         title: this.title,
         location: this.location,
         description: this.description,
-        image: this.image,
+        image: !this.image.trim()
+          ? "https://www.meridadeyucatan.com/wp-content/uploads/2018/01/o-COLLEGE-STUDENTS-TALKING-facebook.jpg"
+          : this.image,
         date: this.correctDateAndTime
       };
       this.$store.dispatch("createMeetup", meetupData);
       this.$router.push("/meetups");
-    },
-    onPickFile() {
-      this.$refs.fileInput.click();
-    },
-    onFilePicked(event) {
-      const files = event.target.files;
-      let filename = files[0].name;
-      if (filename.lastIndexOf(".") <= 0) {
-        return alert("Please add a valid file!");
-      }
-      const fileReader = new FileReader(); //(vanilla JS feature)
-      fileReader.addEventListener("load", () => {
-        this.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-      this.image = files[0];
-      console.log(this.image);
-      console.log(this.imageUrl);
     }
   }
 };

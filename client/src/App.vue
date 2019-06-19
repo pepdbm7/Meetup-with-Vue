@@ -75,7 +75,7 @@ export default {
       return menuItems;
     },
     loggedIn() {
-      return this.$store.getters.getUser;
+      return this.$store.getters.getUserId;
     }
   },
   methods: {

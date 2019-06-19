@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import router from "../router";
 
 Vue.use(Vuex);
 
@@ -8,7 +9,6 @@ const url = "http://localhost:5000";
 export default new Vuex.Store({
   state: {
     allMeetups: [],
-    user: null,
     error: null,
     loading: false,
     userId: localStorage.getItem("userId") || null,
@@ -25,8 +25,14 @@ export default new Vuex.Store({
     setError: (state, payload) => (state.error = payload),
     clearError: state => (state.error = null),
     setLoading: (state, payload) => (state.loading = payload),
-    setUser: (state, payload) => (state.user = payload),
-    clearUser: state => (state.user = null)
+    setUser: (state, payload) => {
+      state.userId = payload.userId;
+      state.token = payload.token;
+    },
+    clearUser: state => {
+      state.userId = null;
+      state.token = null;
+    }
   },
   actions: {
     //to commit the mutations
@@ -120,27 +126,31 @@ export default new Vuex.Store({
           commit("setLoading", false);
           return res.json();
         })
-        .then(res => {
+        .then(async res => {
           if (res.error) {
             return commit("setError", res.error);
           }
-          console.log(res);
           const { id, token } = res.data;
 
           //storing id and token in our global state of vuex:
-          commit("setUser", { id, token });
+          await commit("setUser", { id, token });
 
           //storing id and token in localStorage:
-          localStorage.setItem("userId", id);
-          localStorage.setItem("token", token);
+          await localStorage.setItem("userId", id);
+          await localStorage.setItem("token", token);
+
+          await router.push("/");
+          await router.go();
         });
     },
 
-    logout({ commit }) {
+    logout({ commit, state }) {
       commit("clearUser");
 
       localStorage.removeItem("userId");
       localStorage.removeItem("token");
+      console.log("userid after logout: ", state.userId);
+      router.push("/");
     },
 
     clearError({ commit }) {
@@ -161,9 +171,18 @@ export default new Vuex.Store({
       //get a meetup by Id
       return meetupId => allMeetups.find(m => m.id === meetupId);
     },
-    getUser: ({ user }) => user,
+    getMeetupsUserIsAssistingTo({ allMeetups, userId }) {
+      //return array of meetupsid where user is assisting
+      if (allMeetups && userId) {
+        const meetups = allMeetups.find(meetup =>
+          meetup.assistants.includes(userId)
+        );
+        console.log(meetups);
+        return meetups;
+      }
+    },
+    getUserId: ({ userId }) => userId,
     getError: ({ error }) => error,
-    loading: ({ loading }) => loading,
-    loggedIn: ({ userId }) => !!userId
+    loading: ({ loading }) => loading
   }
 });

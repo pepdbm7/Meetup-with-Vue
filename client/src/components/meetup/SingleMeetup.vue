@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <v-layout row wrap v-if="loading">
+      <v-flex xs12 class="text-xs-center">
+        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70"></v-progress-circular>
+      </v-flex>
+    </v-layout>
     <v-layout row wrap>
       <v-flex xs12>
         <v-card>
@@ -13,7 +18,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn class="primary">Register</v-btn>
+            <app-meetup-assist :meetupId="meetup.id"></app-meetup-assist>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -27,6 +32,14 @@ export default {
   computed: {
     meetup() {
       return this.$store.getters.getAMeetup(this.id); //id from the props of this componennt
+    },
+    userIsCreator() {
+      const userId = this.$store.getters.getUserId;
+      const creatorUserId = this.$store.getters.getAMeetup(this.id).user;
+      return userId === creatorUserId ? true : false;
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   }
 };

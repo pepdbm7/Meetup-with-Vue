@@ -116,11 +116,11 @@ export default {
   },
   computed: {
     //their values now are available for the component, so we can bind html elements to add behaviour
-    ...mapGetters(["loading", "getUser", "getError"])
+    ...mapGetters(["loading", "getUserId", "getError"])
   },
   watch: {
     //if user already logged in, redirect to home page:
-    getUser(value) {
+    getUserId(value) {
       if (value !== null && value !== undefined) {
         this.$router.push("/");
       }
