@@ -9,16 +9,16 @@
       <v-flex xs12>
         <v-card>
           <v-card-title>
-            <h4>{{meetup.title}}</h4>
+            <h4>{{meetup && meetup.title}}</h4>
           </v-card-title>
-          <v-img :src="meetup.image" height="400px"></v-img>
+          <v-img :src="meetup && meetup.image" height="400px"></v-img>
           <v-card-text>
-            <div>{{meetup.date | filteredDate}} - {{meetup.location}}</div>
-            <div>{{meetup.description}}</div>
+            <div>{{meetup && meetup.date | filteredDate}} - {{meetup && meetup.location}}</div>
+            <div>{{meetup && meetup.description}}</div>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <app-meetup-assist :meetupId="meetup.id"></app-meetup-assist>
+            <!-- <v-spacer></v-spacer> -->
+            <app-meetup-assist :meetupId="id" v-if="!userIsCreator"></app-meetup-assist>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -34,8 +34,9 @@ export default {
       return this.$store.getters.getAMeetup(this.id); //id from the props of this componennt
     },
     userIsCreator() {
+      const meetup = this.meetup;
       const userId = this.$store.getters.getUserId;
-      const creatorUserId = this.$store.getters.getAMeetup(this.id).user;
+      const creatorUserId = this.meetup.user;
       return userId === creatorUserId ? true : false;
     },
     loading() {

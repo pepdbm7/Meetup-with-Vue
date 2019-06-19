@@ -6,7 +6,8 @@ import router from "./router";
 import store from "./store";
 import DateFilter from "./filters/date";
 import Alert from "./components/Alert.vue";
-import AssistDialog from "./components/meetup/Assist.vue";
+import AssistDialog from "./components/meetup/AssistDialog.vue";
+import Navbar from "./components/Navbar.vue";
 
 Vue.config.productionTip = false;
 
@@ -14,6 +15,7 @@ Vue.config.productionTip = false;
 Vue.filter("filteredDate", DateFilter);
 Vue.component("app-alert", Alert);
 Vue.component("app-meetup-assist", AssistDialog);
+Vue.component("app-navbar", Navbar);
 
 new Vue({
   router,

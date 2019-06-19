@@ -1,10 +1,12 @@
 <template>
   <v-dialog persistent v-model="showDialog">
-    <v-btn
-      primary
-      accent
-      slot="activator"
-    >{{ userIsAssisting ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
+    <template v-slot:activator="{ on }">
+      <v-btn
+        primary
+        accent
+        slot="activator"
+      >{{ userIsAssisting ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
+    </template>
 
     <!-- dialog itself: -->
     <v-card>
@@ -45,9 +47,8 @@ export default {
   },
   computed: {
     userIsAssisting() {
-      return this.$store.getters.getMeetupsUserIsAssistingTo.includes(
-        this.meetupId
-      );
+      const meetupsArray = this.$store.getters.getMeetupsUserIsAssistingTo;
+      return meetupsArray && meetupsArray.includes(this.meetupId);
     }
   },
   methods: {

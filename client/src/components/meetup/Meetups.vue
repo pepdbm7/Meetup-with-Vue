@@ -17,7 +17,7 @@
                 </v-card-title>
 
                 <v-card-actions>
-                  <v-btn small :to="`/meetups/${id}`" color="orange">Read more...</v-btn>
+                  <v-btn small :to="`/meetups/${id}`" color="info">Read more...</v-btn>
                 </v-card-actions>
               </v-flex>
             </v-layout>

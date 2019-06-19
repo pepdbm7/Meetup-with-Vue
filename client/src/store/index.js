@@ -26,7 +26,8 @@ export default new Vuex.Store({
     clearError: state => (state.error = null),
     setLoading: (state, payload) => (state.loading = payload),
     setUser: (state, payload) => {
-      state.userId = payload.userId;
+      console.log(payload);
+      state.userId = payload.id;
       state.token = payload.token;
     },
     clearUser: state => {
@@ -107,7 +108,8 @@ export default new Vuex.Store({
           if (res.error) {
             return commit("setError", res.error);
           }
-          console.log(res); // TODO: handle success message
+          router.push("/signin");
+          console.log(res.message); // TODO: handle success message
         });
     },
 
@@ -140,7 +142,7 @@ export default new Vuex.Store({
           await localStorage.setItem("token", token);
 
           await router.push("/");
-          await router.go();
+          // await router.go();
         });
     },
 
@@ -168,7 +170,7 @@ export default new Vuex.Store({
       return getters.getAllMeetups.slice(0, 5);
     },
     getAMeetup({ allMeetups }) {
-      //get a meetup by Id
+      //get a meetup by the meetupId we pass as a parameter when calling this getter:
       return meetupId => allMeetups.find(m => m.id === meetupId);
     },
     getMeetupsUserIsAssistingTo({ allMeetups, userId }) {
