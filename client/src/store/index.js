@@ -88,6 +88,31 @@ export default new Vuex.Store({
         });
     },
 
+    assistToMeetup({ commit }, payload) {
+      console.log(payload);
+      commit("setLoading", true);
+
+      const userId = getters.getUserId;
+
+      //sending userid and meetupid by params, so we don't need a body:
+      return fetch(`${url}/user/${userId}/meetup/${payload}/assist`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(res => {
+          //error message
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+          console.log(res);
+        });
+    },
+    cancelAssistance({ commit }, payload) {},
+
     signUp({ commit }, signupData) {
       commit("clearError");
       commit("setLoading", true);

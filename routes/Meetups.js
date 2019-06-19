@@ -28,23 +28,22 @@ router.get("/meetups", (req, res) => {
   });
 });
 
-// router.post("/signin", (req, res) => {
-//   return meetupLogic
-//     .loginUser(req.body)
-//     .then(user => ({
-//       message: `${req.body.username} successfully signed in!`,
-//       data: {
-//         id: user.id,
-//         token: user.token
-//       }
-//     }))
-//     .then(response => res.json(response))
-//     .catch(err => {
-//       const { message } = err;
-//       res.json({
-//         error: message
-//       });
-//     });
-// });
+//assist to a meetup:
+router.put("/user/:userId/meetup/:meetupId/assist", (req, res) => {
+  const {
+    params: { userId, meetupId },
+    sub
+  } = req;
+
+  return meetupLogic
+    .assistToMeetup(userId, meetupId)
+    .then(() => res.json({ message: "Added to Meetup's Assistants list" }))
+    .catch(err => {
+      const { message } = err;
+      res.json({
+        error: message
+      });
+    });
+});
 
 module.exports = router;

@@ -5,6 +5,7 @@
         primary
         accent
         slot="activator"
+        @click="showDialog = true"
       >{{ userIsAssisting ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
     </template>
 
@@ -54,9 +55,9 @@ export default {
   methods: {
     onAgree() {
       if (this.userIsAssisting) {
-        this.$store.dispatch("Cancel assitanceUserFromMeetup", this.meetupId);
+        this.$store.dispatch("cancelAssistance", this.meetupId);
       } else {
-        this.$store.dispatch("assistUserForMeetup", this.meetupId);
+        this.$store.dispatch("assistToMeetup", this.meetupId);
       }
     }
   }

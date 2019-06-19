@@ -26,6 +26,20 @@ const meetupLogic = {
       delete meetup._id;
     });
     return await meetups;
+  },
+
+  async assistToMeetup(userId, meetupId) {
+    const meetup = await Meetup.findById(meetupId);
+    const isAlreadyAssisting = await meetup.assistants.find(
+      usersid => usersid === userId
+    );
+
+    if (isAlreadyAssisting)
+      throw new Error("You were already in the assistants list!");
+
+    await meetup.assistants.push(userId);
+
+    return await meetup.save();
   }
 };
 
