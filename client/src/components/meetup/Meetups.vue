@@ -3,10 +3,10 @@
     <!-- buttons: -->
     <v-layout row wrap>
       <v-flex xs12 sm6 class="text-xs-center text-sm-right">
-        <v-btn large @click="getMine" color="violet">View my meetups</v-btn>
+        <v-btn large @click="getMine" color="secondary">View my meetups</v-btn>
       </v-flex>
       <v-flex xs12 sm6 class="text-xs-center text-sm-left">
-        <v-btn large @click="getAll" color="violet">View all meetups</v-btn>
+        <v-btn large @click="getAll" color="secondary">View all meetups</v-btn>
       </v-flex>
     </v-layout>
 
@@ -29,7 +29,7 @@
                   </v-card-title>
 
                   <v-card-actions>
-                    <v-btn small :to="`/meetups/${id}`" color="violet">Read more...</v-btn>
+                    <v-btn small @click.native="currentMeetup(id)" color="secondary">Read more...</v-btn>
                   </v-card-actions>
                 </v-flex>
               </v-layout>
@@ -58,7 +58,7 @@
                   </v-card-title>
 
                   <v-card-actions>
-                    <v-btn small :to="`/meetups/${id}`" color="violet">Read more...</v-btn>
+                    <v-btn small @click.native="currentMeetup(id)" color="secondary">Read more...</v-btn>
                   </v-card-actions>
                 </v-flex>
               </v-layout>
@@ -80,14 +80,10 @@ export default {
   },
   computed: {
     allMeetups() {
-      const allmeetups = this.$store.getters.getAllMeetups;
-      console.log(allmeetups);
-      return allmeetups;
+      return this.$store.getters.getAllMeetups;
     },
     myMeetups() {
-      const mine = this.$store.getters.getMeetupsIAssistTo;
-      console.log(mine);
-      return mine;
+      return this.$store.getters.getMeetupsIAssistTo;
     }
   },
   methods: {
@@ -98,6 +94,9 @@ export default {
     getMine() {
       this.viewall = false;
       this.viewmine = true;
+    },
+    currentMeetup(id) {
+      this.$store.dispatch("showCurrentMeetup", id);
     }
   }
 };

@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router";
+//to create temporary fake ids for created comments, to store them in the store for a while:
+const uuidv4 = require("uuid/v4");
 
 Vue.use(Vuex);
 
@@ -12,7 +14,8 @@ export default new Vuex.Store({
     error: null,
     loading: false,
     userId: localStorage.getItem("userId") || null,
-    token: localStorage.getItem("token") || null
+    token: localStorage.getItem("token") || null,
+    currentMeetupComments: []
   },
   mutations: {
     //to change the state (when modifying db, etc):
@@ -23,20 +26,35 @@ export default new Vuex.Store({
       allMeetups.push(payload);
     },
     setMeetupChanges({ allMeetups }, payload) {
-      //replace the meetup with the new one:
-      console.log({ meetupwithchanges: payload });
+      //replace the meetup in the state, with the new one:
+
       for (var i in allMeetups) {
         if (allMeetups[i].id === payload._id) {
-          console.log(allMeetups[i]);
           allMeetups[i] = payload;
+          console.log("meetup with new changes:", allMeetups[i]);
           break;
         }
       }
       console.log({ allMeetups });
     },
-    setError: (state, payload) => (state.error = payload),
+
+    //comments:
+    clearComments: state => (state.currentMeetupComments = []),
+    showAllComments: (state, payload) =>
+      (state.currentMeetupComments = payload),
+    addNewComment: (state, payload) => {
+      state.currentMeetupComments.push(payload);
+      console.log(state.currentMeetupComments);
+    },
+    //errors:
+    setError: (state, payload) => {
+      console.log(payload);
+      state.error = payload;
+    },
     clearError: state => (state.error = null),
+    //loading:
     setLoading: (state, payload) => (state.loading = payload),
+    //userData:
     setUser: (state, payload) => {
       console.log(payload);
       state.userId = payload.id;
@@ -96,12 +114,59 @@ export default new Vuex.Store({
         });
     },
 
+    showCurrentMeetup({ commit, state }, payload) {
+      commit("clearComments");
+
+      //fetch the comments of this meetup:
+      return fetch(`${url}/comments/${payload}`, { method: "GET" })
+        .then(res => res.json())
+        .then(comments => {
+          console.log({ comments });
+          if (comments.error) {
+            //error message
+            return commit("setError", comments.error);
+          }
+
+          commit("showAllComments", comments);
+
+          router.push(`/meetups/${payload}`);
+        });
+    },
+
+    createComment({ commit, state }, { meetupId, comment }) {
+      commit("setLoading", true);
+      const { userId, token } = state;
+
+      // store it into the DB
+      return fetch(`${url}/meetup/${meetupId}/newcomment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, comment })
+      })
+        .then(res => res.json())
+        .then(res => {
+          console.log("lo que responde el back al crear comment: ", res);
+          commit("setLoading", false);
+          //error message
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+          commit("addNewComment", {
+            user: userId,
+            meetup: meetupId,
+            content: comment,
+            _id: uuidv4()
+          });
+        });
+    },
+
     assistToMeetup({ commit, state }, payload) {
-      console.log({ payload });
       commit("setLoading", true);
 
       const { userId, token } = state;
-      console.log({ userId, token });
 
       //sending userid and meetupid by params, so we don't need a body:
       return fetch(`${url}/user/${userId}/meetup/${payload}/assist`, {
@@ -115,20 +180,18 @@ export default new Vuex.Store({
         .then(res => {
           commit("setMeetupChanges", res.meetup);
           commit("setLoading", false);
-          router.go();
           //error message:
           if (res.error) {
             return commit("setError", res.error);
           }
+          console.log(state.allMeetups);
         });
     },
 
     cancelAssistance({ commit, state }, payload) {
-      console.log({ payload });
       commit("setLoading", true);
 
       const { userId, token } = state;
-      console.log({ userId, token });
 
       //sending userid and meetupid by params, so we don't need a body:
       return fetch(`${url}/user/${userId}/meetup/${payload}/cancelassistance`, {
@@ -142,7 +205,6 @@ export default new Vuex.Store({
         .then(res => {
           commit("setMeetupChanges", res.meetup);
           commit("setLoading", false);
-          router.go();
           //error message:
           if (res.error) {
             return commit("setError", res.error);
@@ -204,7 +266,6 @@ export default new Vuex.Store({
           await localStorage.setItem("token", token);
 
           await router.push("/");
-          // await router.go();
         });
     },
 
@@ -243,12 +304,15 @@ export default new Vuex.Store({
             return meetup;
           }
         });
-        console.log(meetups);
 
         return meetups.filter(meetup => {
           if (typeof meetup !== undefined) return meetup;
         });
       }
+    },
+    getMeetupComments: ({ currentMeetupComments }) => {
+      console.log(currentMeetupComments);
+      return currentMeetupComments;
     },
     getUserId: ({ userId }) => userId,
     getError: ({ error }) => error,

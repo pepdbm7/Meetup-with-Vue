@@ -62,7 +62,7 @@
 
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
-              <v-btn class="primary mx-0" :disabled="formIsValid" type="submit">Create Now</v-btn>
+              <v-btn class="primary mx-0" :disabled="formIsNotValid" type="submit">Create Now</v-btn>
             </v-flex>
           </v-layout>
         </v-form>
@@ -85,7 +85,7 @@ export default {
     };
   },
   computed: {
-    formIsValid() {
+    formIsNotValid() {
       return (
         !this.title.trim() ||
         !this.location.trim() ||
@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     onCreateMeetup() {
-      if (this.formIsValid) return;
+      if (this.formIsNotValid) return;
       const meetupData = {
         title: this.title,
         location: this.location,

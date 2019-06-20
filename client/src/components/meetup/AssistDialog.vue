@@ -2,7 +2,7 @@
   <v-dialog persistent v-model="showDialog">
     <template v-slot:activator="{ on }">
       <v-btn
-        primary
+        color="secondary"
         accent
         slot="activator"
         @click="showDialog = true"
@@ -49,10 +49,10 @@ export default {
   computed: {
     userIsAssisting() {
       const meetup = this.$store.getters.getAMeetup(this.meetupId);
-      console.log(meetup);
+
       const userId = this.$store.getters.getUserId;
       const isAssisting = meetup ? meetup.assistants.includes(userId) : false;
-      console.log(isAssisting);
+
       return isAssisting;
     }
   },
@@ -60,13 +60,16 @@ export default {
     onAgree() {
       if (this.userIsAssisting) {
         this.$store.dispatch("cancelAssistance", this.meetupId);
-        console.log("cancel action");
+
         this.showDialog = false;
       }
-      console.log("assist action");
+
       this.$store.dispatch("assistToMeetup", this.meetupId);
       this.showDialog = false;
     }
+  },
+  created() {
+    this.$store.dispatch("showCurrentMeetup", this.id);
   }
 };
 </script>

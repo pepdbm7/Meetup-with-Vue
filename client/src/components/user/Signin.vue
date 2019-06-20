@@ -52,6 +52,10 @@
                         <v-icon light>cached</v-icon>
                       </span>
                     </v-btn>
+                    <p class="mt-2">
+                      Don't have an account yet?
+                      <router-link to="/signup">Register now</router-link>
+                    </p>
                   </v-flex>
                 </v-layout>
               </v-form>

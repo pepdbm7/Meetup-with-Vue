@@ -2,10 +2,6 @@
 const Meetup = require("../models/Meetup");
 const User = require("../models/User");
 
-// require("dotenv").config();
-// const secret = process.env.SECRET_KEY;
-// const jwt = require("jsonwebtoken");
-
 const meetupLogic = {
   async createMeetup({ userId, meetupData }) {
     console.log(meetupData);

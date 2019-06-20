@@ -11,6 +11,7 @@ var bodyParser = require("body-parser");
 const package = require("./package.json");
 const users = require("./routes/Users");
 const meetups = require("./routes/Meetups");
+const comments = require("./routes/Comments");
 
 //environment variables:
 require("dotenv").config();
@@ -38,6 +39,7 @@ app.use(cors());
 //routes:
 app.use("/", users);
 app.use("/", meetups);
+app.use("/", comments);
 
 const port = PORT || 8080;
 

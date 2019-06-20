@@ -1,12 +1,33 @@
 $darkgreen: hsl(86, 97%, 35%);
-$violet: #7740f8;
+$orange: hsl(46, 86%, 57%);
+$backgroundComment: #e7e7e7;
+$gray: hsl(0, 1%, 34%);
 
 .meetups-card {
   background: $darkgreen !important;
 }
 
-.meetup-title {
-  color: $violet;
+.meetup-title,
+.comments-title {
+  color: $orange;
+  text-transform: uppercase;
+}
+
+.meetup-info {
+  color: $orange;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.comment-card {
+  color: $gray !important;
+  background: $backgroundComment !important;
+  font-style: oblique;
+}
+
+.comment-title {
+  font-weight: 700;
+  font-style: normal;
+  padding: 5px 16px;
 }
 
 .navbar-title {

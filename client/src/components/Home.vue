@@ -26,11 +26,6 @@
           </v-carousel-item>
         </v-carousel>
       </v-flex>
-      <v-layout class="mt-4">
-        <v-flex xs12 class="text-xs-center">
-          <p>Join us!!</p>
-        </v-flex>
-      </v-layout>
     </v-layout>
   </v-container>
 </template>
@@ -64,7 +59,8 @@ export default {
 .title {
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
-  color: white;
+  color: hsl(46, 86%, 57%);
+  text-transform: uppercase;
   font-size: 2em;
   padding: 20px;
 }
