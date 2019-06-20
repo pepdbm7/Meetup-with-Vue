@@ -51,11 +51,25 @@ const logicUser = {
 
       return await {
         id: payload._id,
-        token
+        token,
+        username
       };
     } else {
       throw new Error("Wrong credentials, try again");
     }
+  },
+  async retrieveUserData(userId) {
+    const user = await User.findById(userId, {
+      _id: 0,
+      password: 0,
+      __v: 0
+    }).lean();
+
+    await console.log(user);
+
+    if (!user) throw new NotFoundError(`user with id ${userId} not found`);
+
+    return user;
   }
 };
 

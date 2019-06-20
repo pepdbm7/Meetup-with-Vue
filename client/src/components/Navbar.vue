@@ -32,16 +32,20 @@
         <v-btn
           flat
           small
-          v-for="{icon, description, link} in menuItems"
+          v-for="{icon, description, link, avatar} in menuItems"
           :key="description"
           :to="link"
         >
-          <v-icon left>s{{icon}}</v-icon>
+          <v-icon left>{{icon}}</v-icon>
+
+          <v-avatar v-if="avatar" size="40">
+            <img :src="user.avatar">
+          </v-avatar>
           {{description}}
         </v-btn>
 
         <v-btn v-if="loggedIn" flat small @click="onLogout">
-          <v-icon left dark>exit_to_app</v-icon>Logout
+          <v-icon left dark color="danger">exit_to_app</v-icon>Logout
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
@@ -71,13 +75,20 @@ export default {
             link: "/meetups"
           },
           { icon: "room", description: "Organize Meetup", link: "/meetup/new" },
-          { icon: "person", description: "Profile", link: "/profile" }
+          {
+            avatar: true,
+            description: this.user.username,
+            link: "/profile"
+          }
         ];
       }
       return menuItems;
     },
     loggedIn() {
       return this.$store.getters.getUserId;
+    },
+    user() {
+      return this.$store.getters.getProfileData;
     }
   },
   methods: {

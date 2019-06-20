@@ -109,8 +109,8 @@ export default {
     }
   },
   watch: {
-    allComments(oldva, newva) {
-      console.log({ oldva, newva });
+    allComments(newva, oldva) {
+      console.log({ newva, oldva });
     }
   },
   methods: {

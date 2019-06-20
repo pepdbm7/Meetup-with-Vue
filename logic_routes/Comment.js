@@ -3,12 +3,13 @@
 const Comment = require("../models/Comment");
 
 const commentLogic = {
+  //create a new comment:
   async createComment(userId, meetupId, comment) {
     const newComment = { user: userId, meetup: meetupId, content: comment };
-    const created = await new Comment(newComment);
-    console.log("the new id of the comment is:", _id);
+    await Comment.create(newComment);
   },
 
+  //get all comments of this meetup:
   async getCommentsofMeetup(meetupId) {
     const comments = await Comment.find({ meetup: meetupId }, { __v: 0 })
       .populate("user", { password: 0, __v: 0 })

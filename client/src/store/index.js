@@ -13,8 +13,15 @@ export default new Vuex.Store({
     allMeetups: [],
     error: null,
     loading: false,
-    userId: localStorage.getItem("userId") || null,
-    token: localStorage.getItem("token") || null,
+    user: {
+      userId: localStorage.getItem("userId") || null,
+      token: localStorage.getItem("token") || null,
+      username: localStorage.getItem("username") || null,
+      email: localStorage.getItem("email") || null,
+      city: localStorage.getItem("city") || null,
+      avatar: localStorage.getItem("avatar") || null,
+      joinDate: localStorage.getItem("joinDate") || null
+    },
     currentMeetupComments: []
   },
   mutations: {
@@ -54,21 +61,35 @@ export default new Vuex.Store({
     clearError: state => (state.error = null),
     //loading:
     setLoading: (state, payload) => (state.loading = payload),
+
     //userData:
-    setUser: (state, payload) => {
+    setUser: ({ user }, payload) => {
       console.log(payload);
-      state.userId = payload.id;
-      state.token = payload.token;
+      user.userId = payload.id;
+      user.token = payload.token;
+      user.username = payload.username;
     },
-    clearUser: state => {
-      state.userId = null;
-      state.token = null;
+    setUserMoreData: ({ user }, payload) => {
+      console.log(payload);
+      user.email = payload.email;
+      user.city = payload.city;
+      user.avatar = payload.avatar;
+      user.joinDate = payload.joinDate;
+    },
+
+    clearUser: ({ user }) => {
+      user.userId = null;
+      user.token = null;
+      user.email = null;
+      user.city = null;
+      user.avatar = null;
+      user.joinDate = null;
     }
   },
   actions: {
     //to commit the mutations
     showAllMeetups(context) {
-      const { token } = context.state;
+      const { token } = context.state.user;
       context.commit("setLoading", true);
 
       return fetch(`${url}/meetups`, { method: "GET" })
@@ -83,9 +104,12 @@ export default new Vuex.Store({
         });
     },
 
-    createMeetup(context, payload) {
+    createMeetup({ commit, state }, payload) {
       //context object exposes same set of methods/properties on the store instance
-      const { userId, token } = context.state;
+      const {
+        user: { userId, token }
+      } = state;
+
       const meetupData = {
         title: payload.title,
         location: payload.location,
@@ -109,7 +133,7 @@ export default new Vuex.Store({
           if (res.error) {
             return commit("setError", res.error);
           }
-          context.commit("createMeetup", res);
+          commit("createMeetup", res);
           console.log(res);
         });
     },
@@ -135,7 +159,9 @@ export default new Vuex.Store({
 
     createComment({ commit, state }, { meetupId, comment }) {
       commit("setLoading", true);
-      const { userId, token } = state;
+      const {
+        user: { userId, token, username }
+      } = state;
 
       // store it into the DB
       return fetch(`${url}/meetup/${meetupId}/newcomment`, {
@@ -155,7 +181,7 @@ export default new Vuex.Store({
             return commit("setError", res.error);
           }
           commit("addNewComment", {
-            user: userId,
+            user: { username },
             meetup: meetupId,
             content: comment,
             _id: uuidv4()
@@ -166,7 +192,9 @@ export default new Vuex.Store({
     assistToMeetup({ commit, state }, payload) {
       commit("setLoading", true);
 
-      const { userId, token } = state;
+      const {
+        user: { userId, token }
+      } = state;
 
       //sending userid and meetupid by params, so we don't need a body:
       return fetch(`${url}/user/${userId}/meetup/${payload}/assist`, {
@@ -191,7 +219,9 @@ export default new Vuex.Store({
     cancelAssistance({ commit, state }, payload) {
       commit("setLoading", true);
 
-      const { userId, token } = state;
+      const {
+        user: { userId, token }
+      } = state;
 
       //sending userid and meetupid by params, so we don't need a body:
       return fetch(`${url}/user/${userId}/meetup/${payload}/cancelassistance`, {
@@ -256,17 +286,46 @@ export default new Vuex.Store({
           if (res.error) {
             return commit("setError", res.error);
           }
-          const { id, token } = res.data;
+          const { id, token, username } = res;
 
           //storing id and token in our global state of vuex:
-          await commit("setUser", { id, token });
+          await commit("setUser", { id, token, username });
 
           //storing id and token in localStorage:
           await localStorage.setItem("userId", id);
           await localStorage.setItem("token", token);
-
+          await localStorage.setItem("username", username);
+          //redirect to home:
           await router.push("/");
         });
+    },
+
+    retrieveUser({ commit, state }) {
+      const {
+        user: { userId }
+      } = state;
+
+      return fetch(`${url}/user/${userId}`, { method: "GET" })
+        .then(res => res.json())
+        .then(async res => {
+          if (res.error) {
+            //error message
+            return commit("setError", res.error);
+          }
+          console.log({ res });
+
+          const { email, city, avatar, joinDate } = res;
+
+          //storing data in our global state of vuex:
+          await commit("setUserMoreData", { email, city, avatar, joinDate });
+
+          //storing data in localStorage, in case the page is refreshed store data can be lost:
+          await localStorage.setItem("email", email);
+          await localStorage.setItem("city", city);
+          await localStorage.setItem("avatar", avatar);
+          await localStorage.setItem("joinDate", joinDate);
+        })
+        .catch(err => console.log(err));
     },
 
     logout({ commit, state }) {
@@ -274,8 +333,13 @@ export default new Vuex.Store({
 
       localStorage.removeItem("userId");
       localStorage.removeItem("token");
-      console.log("userid after logout: ", state.userId);
+      localStorage.removeItem("username");
+      localStorage.removeItem("email");
+      localStorage.removeItem("city");
+      localStorage.removeItem("avatar");
+      localStorage.removeItem("joinDate");
       router.push("/");
+      console.log(state);
     },
 
     clearError({ commit }) {
@@ -296,11 +360,11 @@ export default new Vuex.Store({
       //get a meetup by the 'meetupId' we pass as a parameter when calling this getter:
       return meetupId => allMeetups.find(m => m.id === meetupId);
     },
-    getMeetupsIAssistTo({ allMeetups, userId }) {
+    getMeetupsIAssistTo({ allMeetups, user }) {
       //return array of meetupsid where user is assisting
-      if (allMeetups && userId) {
+      if (allMeetups && user.userId) {
         const meetups = allMeetups.map(meetup => {
-          if (meetup.assistants.includes(userId)) {
+          if (meetup.assistants.includes(user.userId)) {
             return meetup;
           }
         });
@@ -314,7 +378,8 @@ export default new Vuex.Store({
       console.log(currentMeetupComments);
       return currentMeetupComments;
     },
-    getUserId: ({ userId }) => userId,
+    getUserId: ({ user }) => user.userId,
+    getProfileData: ({ user }) => user,
     getError: ({ error }) => error,
     loading: ({ loading }) => loading
   }

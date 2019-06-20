@@ -56,6 +56,11 @@ export default {
       return isAssisting;
     }
   },
+  watch: {
+    userIsAssisting(newva, oldva) {
+      console.log({ newva, oldva });
+    }
+  },
   methods: {
     onAgree() {
       if (this.userIsAssisting) {
@@ -67,9 +72,6 @@ export default {
       this.$store.dispatch("assistToMeetup", this.meetupId);
       this.showDialog = false;
     }
-  },
-  created() {
-    this.$store.dispatch("showCurrentMeetup", this.id);
   }
 };
 </script>

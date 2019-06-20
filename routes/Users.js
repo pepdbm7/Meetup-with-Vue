@@ -24,14 +24,22 @@ router.post("/signup", (req, res) => {
 router.post("/signin", (req, res) => {
   return userLogic
     .loginUser(req.body)
-    .then(user => ({
-      message: `${req.body.username} successfully signed in!`,
-      data: {
-        id: user.id,
-        token: user.token
-      }
-    }))
-    .then(response => res.json(response))
+    .then(user => res.json(user))
+    .catch(err => {
+      const { message } = err;
+      res.json({
+        error: message
+      });
+    });
+});
+
+router.get("/user/:userId", (req, res) => {
+  const {
+    params: { userId }
+  } = req;
+  return userLogic
+    .retrieveUserData(userId)
+    .then(user => res.json(user))
     .catch(err => {
       const { message } = err;
       res.json({
