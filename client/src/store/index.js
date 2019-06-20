@@ -101,6 +101,8 @@ export default new Vuex.Store({
           }
           context.commit("setAllMeetups", meetups);
           context.commit("setLoading", false);
+
+          router.push("/meetups");
         });
     },
 
@@ -363,6 +365,7 @@ export default new Vuex.Store({
     getMeetupsIAssistTo({ allMeetups, user }) {
       //return array of meetupsid where user is assisting
       if (allMeetups && user.userId) {
+        console.log({ allMeetups });
         const meetups = allMeetups.map(meetup => {
           if (meetup.assistants.includes(user.userId)) {
             return meetup;

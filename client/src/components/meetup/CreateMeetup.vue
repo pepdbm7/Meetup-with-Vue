@@ -124,7 +124,7 @@ export default {
         date: this.correctDateAndTime
       };
       this.$store.dispatch("createMeetup", meetupData);
-      this.$router.push("/meetups");
+      this.$store.dispatch("showAllMeetups");
     }
   }
 };
