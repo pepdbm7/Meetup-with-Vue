@@ -36,7 +36,7 @@ export default {
     userIsCreator() {
       const meetup = this.meetup;
       const userId = this.$store.getters.getUserId;
-      const creatorUserId = this.meetup.user;
+      const creatorUserId = this.meetup && this.meetup.user;
       return userId === creatorUserId ? true : false;
     },
     loading() {

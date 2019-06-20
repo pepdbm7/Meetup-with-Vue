@@ -1,8 +1,14 @@
-$secondary: hsl(86, 97%, 35%);
+$darkgreen: hsl(86, 97%, 35%);
+$violet: #7740f8;
 
 .meetups-card {
-  background: $secondary !important;
+  background: $darkgreen !important;
 }
+
+.meetup-title {
+  color: $violet;
+}
+
 .navbar-title {
   cursor: pointer;
 }

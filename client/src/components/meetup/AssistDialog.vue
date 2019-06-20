@@ -6,7 +6,7 @@
         accent
         slot="activator"
         @click="showDialog = true"
-      >{{ userIsAssisting ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
+      >{{ userIsAssisting === true ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
     </template>
 
     <!-- dialog itself: -->
@@ -15,7 +15,7 @@
         <v-layout row wrap>
           <v-flex xs12>
             <!-- condition for the title: -->
-            <v-card-title v-if="userIsAssisting">Cancel your assitance?</v-card-title>
+            <v-card-title v-if="userIsAssisting === true">Cancel your assitance?</v-card-title>
             <v-card-title v-else>Assist to Meetup?</v-card-title>
           </v-flex>
         </v-layout>
@@ -48,17 +48,24 @@ export default {
   },
   computed: {
     userIsAssisting() {
-      const meetupsArray = this.$store.getters.getMeetupsUserIsAssistingTo;
-      return meetupsArray && meetupsArray.includes(this.meetupId);
+      const meetup = this.$store.getters.getAMeetup(this.meetupId);
+      console.log(meetup);
+      const userId = this.$store.getters.getUserId;
+      const isAssisting = meetup ? meetup.assistants.includes(userId) : false;
+      console.log(isAssisting);
+      return isAssisting;
     }
   },
   methods: {
     onAgree() {
-      if (this.userIsAssisting) {
+      if (this.userIsAssisting === true) {
         this.$store.dispatch("cancelAssistance", this.meetupId);
-      } else {
-        this.$store.dispatch("assistToMeetup", this.meetupId);
+        console.log("cancel action");
+        this.showDialog = false;
       }
+      console.log("assist action");
+      this.$store.dispatch("assistToMeetup", this.meetupId);
+      this.showDialog = false;
     }
   }
 };

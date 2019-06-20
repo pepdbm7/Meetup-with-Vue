@@ -15,12 +15,24 @@ export default new Vuex.Store({
     token: localStorage.getItem("token") || null
   },
   mutations: {
-    //to change the state:
+    //to change the state (when modifying db, etc):
     setAllMeetups(state, payload) {
       state.allMeetups = payload;
     },
     createMeetup({ allMeetups }, payload) {
       allMeetups.push(payload);
+    },
+    setMeetupChanges({ allMeetups }, payload) {
+      //replace the meetup with the new one:
+      console.log({ meetupwithchanges: payload });
+      for (var i in allMeetups) {
+        if (allMeetups[i].id === payload._id) {
+          console.log(allMeetups[i]);
+          allMeetups[i] = payload;
+          break;
+        }
+      }
+      console.log({ allMeetups });
     },
     setError: (state, payload) => (state.error = payload),
     clearError: state => (state.error = null),
@@ -42,16 +54,12 @@ export default new Vuex.Store({
       context.commit("setLoading", true);
 
       return fetch(`${url}/meetups`, { method: "GET" })
-        .then(res => {
-          console.log(res);
-          //error message
-          if (res.error) {
-            return commit("setError", res.error);
-          }
-          return res.json();
-        })
+        .then(res => res.json())
         .then(meetups => {
-          console.log(meetups);
+          if (meetups.error) {
+            //error message
+            return commit("setError", meetups.error);
+          }
           context.commit("setAllMeetups", meetups);
           context.commit("setLoading", false);
         });
@@ -78,21 +86,22 @@ export default new Vuex.Store({
         body: JSON.stringify({ userId, meetupData })
       })
         .then(res => res.json())
-        .then(res => context.commit("createMeetup", res))
         .then(res => {
           //error message
           if (res.error) {
             return commit("setError", res.error);
           }
+          context.commit("createMeetup", res);
           console.log(res);
         });
     },
 
-    assistToMeetup({ commit }, payload) {
-      console.log(payload);
+    assistToMeetup({ commit, state }, payload) {
+      console.log({ payload });
       commit("setLoading", true);
 
-      const userId = getters.getUserId;
+      const { userId, token } = state;
+      console.log({ userId, token });
 
       //sending userid and meetupid by params, so we don't need a body:
       return fetch(`${url}/user/${userId}/meetup/${payload}/assist`, {
@@ -104,14 +113,42 @@ export default new Vuex.Store({
       })
         .then(res => res.json())
         .then(res => {
-          //error message
+          commit("setLoading", false);
+          commit("setMeetupChanges", res.meetup);
+          router.go();
+          //error message:
           if (res.error) {
             return commit("setError", res.error);
           }
-          console.log(res);
         });
     },
-    cancelAssistance({ commit }, payload) {},
+
+    cancelAssistance({ commit, state }, payload) {
+      console.log({ payload });
+      commit("setLoading", true);
+
+      const { userId, token } = state;
+      console.log({ userId, token });
+
+      //sending userid and meetupid by params, so we don't need a body:
+      return fetch(`${url}/user/${userId}/meetup/${payload}/cancelassistance`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(res => {
+          commit("setLoading", false);
+          commit("setMeetupChanges", res.meetup);
+          router.go();
+          //error message:
+          if (res.error) {
+            return commit("setError", res.error);
+          }
+        });
+    },
 
     signUp({ commit }, signupData) {
       commit("clearError");
@@ -195,17 +232,21 @@ export default new Vuex.Store({
       return getters.getAllMeetups.slice(0, 5);
     },
     getAMeetup({ allMeetups }) {
-      //get a meetup by the meetupId we pass as a parameter when calling this getter:
+      //get a meetup by the 'meetupId' we pass as a parameter when calling this getter:
       return meetupId => allMeetups.find(m => m.id === meetupId);
     },
     getMeetupsUserIsAssistingTo({ allMeetups, userId }) {
       //return array of meetupsid where user is assisting
       if (allMeetups && userId) {
-        const meetups = allMeetups.find(meetup =>
-          meetup.assistants.includes(userId)
-        );
-        console.log(meetups);
-        return meetups;
+        const meetupsIds = allMeetups.map(meetup => {
+          if (meetup.assistants.includes(userId)) {
+            return meetup.id;
+          }
+        });
+
+        return meetupsIds.filter(ids => {
+          if (typeof ids === "string") return ids;
+        });
       }
     },
     getUserId: ({ userId }) => userId,

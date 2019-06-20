@@ -31,13 +31,33 @@ router.get("/meetups", (req, res) => {
 //assist to a meetup:
 router.put("/user/:userId/meetup/:meetupId/assist", (req, res) => {
   const {
-    params: { userId, meetupId },
-    sub
+    params: { userId, meetupId }
   } = req;
 
   return meetupLogic
     .assistToMeetup(userId, meetupId)
-    .then(() => res.json({ message: "Added to Meetup's Assistants list" }))
+    .then(meetup =>
+      res.json({ message: "Added to Meetup's Assistants list", meetup })
+    )
+    .catch(err => {
+      const { message } = err;
+      res.json({
+        error: message
+      });
+    });
+});
+
+//assist to a meetup:
+router.put("/user/:userId/meetup/:meetupId/cancelassistance", (req, res) => {
+  const {
+    params: { userId, meetupId }
+  } = req;
+
+  return meetupLogic
+    .cancelAssistance(userId, meetupId)
+    .then(meetup =>
+      res.json({ message: "Removed from Meetup's Assistants list", meetup })
+    )
     .catch(err => {
       const { message } = err;
       res.json({

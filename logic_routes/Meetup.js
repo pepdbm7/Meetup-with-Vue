@@ -40,6 +40,24 @@ const meetupLogic = {
     await meetup.assistants.push(userId);
 
     return await meetup.save();
+  },
+
+  async cancelAssistance(userId, meetupId) {
+    const meetup = await Meetup.findById(meetupId);
+    const listWithoutUserId = await meetup.assistants.filter(
+      usersid => usersid !== userId
+    );
+
+    const userIdNotDeleted = await listWithoutUserId.find(
+      usersId => usersId === userId
+    );
+
+    if (userIdNotDeleted)
+      throw new Error("Couldn't remove user from assistants list");
+
+    meetup.assistants = listWithoutUserId;
+
+    return await meetup.save();
   }
 };
 
