@@ -113,8 +113,8 @@ export default new Vuex.Store({
       })
         .then(res => res.json())
         .then(res => {
-          commit("setLoading", false);
           commit("setMeetupChanges", res.meetup);
+          commit("setLoading", false);
           router.go();
           //error message:
           if (res.error) {
@@ -140,8 +140,8 @@ export default new Vuex.Store({
       })
         .then(res => res.json())
         .then(res => {
-          commit("setLoading", false);
           commit("setMeetupChanges", res.meetup);
+          commit("setLoading", false);
           router.go();
           //error message:
           if (res.error) {
@@ -235,17 +235,18 @@ export default new Vuex.Store({
       //get a meetup by the 'meetupId' we pass as a parameter when calling this getter:
       return meetupId => allMeetups.find(m => m.id === meetupId);
     },
-    getMeetupsUserIsAssistingTo({ allMeetups, userId }) {
+    getMeetupsIAssistTo({ allMeetups, userId }) {
       //return array of meetupsid where user is assisting
       if (allMeetups && userId) {
-        const meetupsIds = allMeetups.map(meetup => {
+        const meetups = allMeetups.map(meetup => {
           if (meetup.assistants.includes(userId)) {
-            return meetup.id;
+            return meetup;
           }
         });
+        console.log(meetups);
 
-        return meetupsIds.filter(ids => {
-          if (typeof ids === "string") return ids;
+        return meetups.filter(meetup => {
+          if (typeof meetup !== undefined) return meetup;
         });
       }
     },

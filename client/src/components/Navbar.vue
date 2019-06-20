@@ -29,12 +29,18 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-xs-only">
-        <v-btn flat v-for="{icon, description, link} in menuItems" :key="description" :to="link">
+        <v-btn
+          flat
+          small
+          v-for="{icon, description, link} in menuItems"
+          :key="description"
+          :to="link"
+        >
           <v-icon left>s{{icon}}</v-icon>
           {{description}}
         </v-btn>
 
-        <v-btn v-if="loggedIn" flat @click="onLogout">
+        <v-btn v-if="loggedIn" flat small @click="onLogout">
           <v-icon left dark>exit_to_app</v-icon>Logout
         </v-btn>
       </v-toolbar-items>

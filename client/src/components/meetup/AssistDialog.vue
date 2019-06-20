@@ -6,7 +6,7 @@
         accent
         slot="activator"
         @click="showDialog = true"
-      >{{ userIsAssisting === true ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
+      >{{ userIsAssisting ? 'Cancel assitance' : 'I\'ll Assist' }}</v-btn>
     </template>
 
     <!-- dialog itself: -->
@@ -15,7 +15,7 @@
         <v-layout row wrap>
           <v-flex xs12>
             <!-- condition for the title: -->
-            <v-card-title v-if="userIsAssisting === true">Cancel your assitance?</v-card-title>
+            <v-card-title v-if="userIsAssisting">Cancel your assitance?</v-card-title>
             <v-card-title v-else>Assist to Meetup?</v-card-title>
           </v-flex>
         </v-layout>
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     onAgree() {
-      if (this.userIsAssisting === true) {
+      if (this.userIsAssisting) {
         this.$store.dispatch("cancelAssistance", this.meetupId);
         console.log("cancel action");
         this.showDialog = false;
