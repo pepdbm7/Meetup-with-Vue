@@ -2,7 +2,7 @@
   "name": "meetup_app_vue",
   "version": "1.0.0",
   "engines": {
-    "node": "8.9.4"
+    "node": "10.16.0"
   },
   "description": "Social network powered by Vue.js, Node and MongoDB",
   "main": "index.js",
