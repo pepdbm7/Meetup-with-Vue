@@ -56,11 +56,6 @@ export default {
       return isAssisting;
     }
   },
-  watch: {
-    userIsAssisting(newva, oldva) {
-      console.log({ newva, oldva });
-    }
-  },
   methods: {
     onAgree() {
       if (this.userIsAssisting) {

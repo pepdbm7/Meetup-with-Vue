@@ -41,6 +41,11 @@ app.use("/", users);
 app.use("/", meetups);
 app.use("/", comments);
 
+//Serve up static assets (usually on Heroku):
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
+
 const port = PORT || 8080;
 
 //listens connection on port:

@@ -68,6 +68,7 @@ export default new Vuex.Store({
       user.userId = payload.id;
       user.token = payload.token;
       user.username = payload.username;
+      user.avatar = payload.avatar;
     },
     setUserMoreData: ({ user }, payload) => {
       console.log(payload);
@@ -288,15 +289,17 @@ export default new Vuex.Store({
           if (res.error) {
             return commit("setError", res.error);
           }
-          const { id, token, username } = res;
+          const { id, token, username, avatar } = res;
+          console.log(res);
 
           //storing id and token in our global state of vuex:
-          await commit("setUser", { id, token, username });
+          await commit("setUser", { id, token, username, avatar });
 
           //storing id and token in localStorage:
           await localStorage.setItem("userId", id);
           await localStorage.setItem("token", token);
           await localStorage.setItem("username", username);
+          await localStorage.setItem("avatar", avatar);
           //redirect to home:
           await router.push("/");
         });

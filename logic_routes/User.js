@@ -49,11 +49,14 @@ const logicUser = {
 
       if (!token) throw new Error("Couldn't get the user token");
 
-      return await {
+      const response = {
         id: payload._id,
         token,
-        username
+        username,
+        avatar: user.avatar
       };
+
+      return await response;
     } else {
       throw new Error("Wrong credentials, try again");
     }
@@ -62,10 +65,9 @@ const logicUser = {
     const user = await User.findById(userId, {
       _id: 0,
       password: 0,
+      image: 0,
       __v: 0
     }).lean();
-
-    await console.log(user);
 
     if (!user) throw new NotFoundError(`user with id ${userId} not found`);
 

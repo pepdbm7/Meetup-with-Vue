@@ -108,11 +108,6 @@ export default {
       return this.$store.getters.loading;
     }
   },
-  watch: {
-    allComments(newva, oldva) {
-      console.log({ newva, oldva });
-    }
-  },
   methods: {
     onCreateComment() {
       if (this.formIsNotValid) return;

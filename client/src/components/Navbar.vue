@@ -67,7 +67,6 @@ export default {
       ];
 
       if (this.loggedIn) {
-        console.log(this.loggedIn, typeof this.loggedIn);
         menuItems = [
           {
             icon: "supervisor_account",

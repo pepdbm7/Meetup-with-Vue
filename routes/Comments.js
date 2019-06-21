@@ -32,7 +32,6 @@ router.get("/comments/:meetupId", (req, res) => {
   } = req;
 
   return commentLogic.getCommentsofMeetup(meetupId).then(comments => {
-    console.log({ comments });
     res.json(comments);
   });
 });

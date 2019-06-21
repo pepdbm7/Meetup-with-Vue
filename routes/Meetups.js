@@ -8,7 +8,6 @@ const meetupLogic = require("../logic_routes/Meetup");
 const router = express.Router();
 //add new meetup:
 router.post("/meetup/new", (req, res) => {
-  console.log(req.body);
   return meetupLogic
     .createMeetup(req.body)
     .then(() => res.json({ message: `Meetup successfully created!` }))
