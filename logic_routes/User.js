@@ -23,6 +23,8 @@ const logicUser = {
     //encrypt password:
     const encryptPassword = await bcrypt.hash(password, 10);
 
+    if (!encryptPassword) throw new Error("Couldn't encrypt the password");
+
     let newUser = {
       username,
       email,
@@ -37,29 +39,31 @@ const logicUser = {
   async loginUser({ username, password }) {
     const user = await User.findOne({ username });
 
-    if (user && bcrypt.compareSync(password, user.password)) {
-      const payload = {
-        _id: user.id,
-        username
-      };
+    if (user) throw new Error(`User not found!!`);
 
-      let token = await jwt.sign(payload, secret, {
-        expiresIn: 86400 // expires in 24 hours
-      });
+    const comparedPasswords = await bcrypt.compareSync(password, user.password);
 
-      if (!token) throw new Error("Couldn't get the user token");
+    if (comparedPasswords) throw new Error(`Problem comparing passwords!`);
 
-      const response = {
-        id: payload._id,
-        token,
-        username,
-        avatar: user.avatar
-      };
+    const payload = await {
+      _id: user.id,
+      username
+    };
 
-      return await response;
-    } else {
-      throw new Error("Wrong credentials, try again");
-    }
+    let token = await jwt.sign(payload, secret, {
+      expiresIn: 86400 // expires in 24 hours
+    });
+
+    if (!token) throw new Error("Couldn't get the user token");
+
+    const response = {
+      id: payload._id,
+      token,
+      username,
+      avatar: user.avatar
+    };
+
+    return await response;
   },
   async retrieveUserData(userId) {
     const user = await User.findById(userId, {
