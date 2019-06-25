@@ -6,7 +6,8 @@ const uuidv4 = require("uuid/v4");
 
 Vue.use(Vuex);
 
-const url = "http://localhost:5000";
+const url = "https://meetup-mevn-pep.herokuapp.com"; //to use serverside connected to heroku
+// const url = "http://localhost:5000"; //to use serverside of this repo
 
 export default new Vuex.Store({
   state: {
