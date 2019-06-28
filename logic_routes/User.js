@@ -1,5 +1,3 @@
-const bcrypt = require("bcrypt-nodejs");
-
 //models:
 const User = require("../models/User");
 
@@ -20,10 +18,6 @@ const logicUser = {
       throw new Error(`The username ${username} is already used`);
 
     const joinDate = new Date();
-    //encrypt password:
-    const encryptPassword = await bcrypt.hash(password, 10);
-
-    if (!encryptPassword) throw new Error("Couldn't encrypt the password");
 
     let newUser = {
       username,
@@ -39,14 +33,10 @@ const logicUser = {
   async loginUser({ username, password }) {
     const user = await User.findOne({ username });
 
-    if (user) throw new Error(`User not found!!`);
-
-    const comparedPasswords = await bcrypt.compareSync(password, user.password);
-
-    if (comparedPasswords) throw new Error(`Problem comparing passwords!`);
+    if (!user) throw new Error(`User not found!!`);
 
     const payload = await {
-      _id: user.id,
+      _id: user._id.toString(),
       username
     };
 
@@ -65,6 +55,7 @@ const logicUser = {
 
     return await response;
   },
+
   async retrieveUserData(userId) {
     const user = await User.findById(userId, {
       _id: 0,

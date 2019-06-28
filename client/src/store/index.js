@@ -6,7 +6,7 @@ const uuidv4 = require("uuid/v4");
 
 Vue.use(Vuex);
 
-// const url = "https://meetup-mevn-pep.herokuapp.com"; //to use heroku given url for our project
+const url = "https://meetup-mevn-pep.herokuapp.com/api"; //to use heroku given url for our project
 // const url = "http://localhost:5000"; //to use local server
 
 export default new Vuex.Store({
@@ -56,7 +56,6 @@ export default new Vuex.Store({
     },
     //errors:
     setError: (state, payload) => {
-      console.log(payload);
       state.error = payload;
     },
     clearError: state => (state.error = null),
@@ -65,14 +64,12 @@ export default new Vuex.Store({
 
     //userData:
     setUser: ({ user }, payload) => {
-      console.log(payload);
       user.userId = payload.id;
       user.token = payload.token;
       user.username = payload.username;
       user.avatar = payload.avatar;
     },
     setUserMoreData: ({ user }, payload) => {
-      console.log(payload);
       user.email = payload.email;
       user.city = payload.city;
       user.avatar = payload.avatar;
@@ -91,21 +88,26 @@ export default new Vuex.Store({
   actions: {
     //to commit the mutations
     showAllMeetups(context) {
-      const { token } = context.state.user;
       context.commit("setLoading", true);
+      context.commit("clearError");
 
-      return fetch(`/meetups`, { method: "GET" })
-        .then(res => res.json())
-        .then(meetups => {
-          if (meetups.error) {
-            //error message
-            return commit("setError", meetups.error);
-          }
-          context.commit("setAllMeetups", meetups);
-          context.commit("setLoading", false);
+      console.log("inside showallmeetups action");
+      try {
+        return fetch(`${url}/meetups`, { method: "GET" })
+          .then(res => res.json())
+          .then(meetups => {
+            if (meetups.error) {
+              //error message
+              return commit("setError", meetups.error);
+            }
+            context.commit("setAllMeetups", meetups);
+            context.commit("setLoading", false);
 
-          router.push("/meetups");
-        });
+            router.push("/meetups");
+          });
+      } catch (err) {
+        console.log(err);
+      }
     },
 
     createMeetup({ commit, state }, payload) {
@@ -123,7 +125,7 @@ export default new Vuex.Store({
       };
 
       // store it into the DB
-      return fetch(`/meetup/new`, {
+      return fetch(`${url}/meetup/new`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -146,7 +148,7 @@ export default new Vuex.Store({
       commit("clearComments");
 
       //fetch the comments of this meetup:
-      return fetch(`/comments/${payload}`, { method: "GET" })
+      return fetch(`${url}/comments/${payload}`, { method: "GET" })
         .then(res => res.json())
         .then(comments => {
           console.log({ comments });
@@ -168,7 +170,7 @@ export default new Vuex.Store({
       } = state;
 
       // store it into the DB
-      return fetch(`/meetup/${meetupId}/newcomment`, {
+      return fetch(`${url}/meetup/${meetupId}/newcomment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -201,7 +203,7 @@ export default new Vuex.Store({
       } = state;
 
       //sending userid and meetupid by params, so we don't need a body:
-      return fetch(`/user/${userId}/meetup/${payload}/assist`, {
+      return fetch(`${url}/user/${userId}/meetup/${payload}/assist`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -228,7 +230,7 @@ export default new Vuex.Store({
       } = state;
 
       //sending userid and meetupid by params, so we don't need a body:
-      return fetch(`/user/${userId}/meetup/${payload}/cancelassistance`, {
+      return fetch(`${url}/user/${userId}/meetup/${payload}/cancelassistance`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -256,7 +258,7 @@ export default new Vuex.Store({
         body: JSON.stringify(signupData)
       };
 
-      return fetch(`/signup`, requestOptions)
+      return fetch(`${url}/signup`, requestOptions)
         .then(res => {
           commit("setLoading", false);
           return res.json();
@@ -274,36 +276,40 @@ export default new Vuex.Store({
     signIn({ commit }, credentials) {
       commit("clearError");
       commit("setLoading", true);
+      console.log("inside signin action");
 
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify(credentials)
       };
+      try {
+        return fetch(`${url}/signin`, requestOptions)
+          .then(res => {
+            commit("setLoading", false);
+            return res.json();
+          })
+          .then(async res => {
+            if (res.error) {
+              return commit("setError", res.error);
+            }
+            const { id, token, username, avatar } = res;
+            console.log(res);
 
-      return fetch(`/signin`, requestOptions)
-        .then(res => {
-          commit("setLoading", false);
-          return res.json();
-        })
-        .then(async res => {
-          if (res.error) {
-            return commit("setError", res.error);
-          }
-          const { id, token, username, avatar } = res;
-          console.log(res);
+            //storing id and token in our global state of vuex:
+            await commit("setUser", { id, token, username, avatar });
 
-          //storing id and token in our global state of vuex:
-          await commit("setUser", { id, token, username, avatar });
-
-          //storing id and token in localStorage:
-          await localStorage.setItem("userId", id);
-          await localStorage.setItem("token", token);
-          await localStorage.setItem("username", username);
-          await localStorage.setItem("avatar", avatar);
-          //redirect to home:
-          await router.push("/");
-        });
+            //storing id and token in localStorage:
+            await localStorage.setItem("userId", id);
+            await localStorage.setItem("token", token);
+            await localStorage.setItem("username", username);
+            await localStorage.setItem("avatar", avatar);
+            //redirect to home:
+            await router.push("/");
+          });
+      } catch (err) {
+        console.log(err);
+      }
     },
 
     retrieveUser({ commit, state }) {
@@ -311,7 +317,7 @@ export default new Vuex.Store({
         user: { userId }
       } = state;
 
-      return fetch(`/user/${userId}`, { method: "GET" })
+      return fetch(`${url}/user/${userId}`, { method: "GET" })
         .then(res => res.json())
         .then(async res => {
           if (res.error) {
