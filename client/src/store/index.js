@@ -6,7 +6,7 @@ const uuidv4 = require("uuid/v4");
 
 Vue.use(Vuex);
 
-const url = "https://meetup-mevn-pep.herokuapp.com/api"; //to use heroku given url for our project
+// const url = "https://meetup-mevn-pep.herokuapp.com/api"; //to use heroku given url for our project
 // const url = "http://localhost:5000"; //to use local server
 
 export default new Vuex.Store({
@@ -93,7 +93,7 @@ export default new Vuex.Store({
 
       console.log("inside showallmeetups action");
       try {
-        return fetch(`${url}/meetups`, { method: "GET" })
+        return fetch(`/meetups`, { method: "GET" })
           .then(res => res.json())
           .then(meetups => {
             if (meetups.error) {
@@ -125,7 +125,7 @@ export default new Vuex.Store({
       };
 
       // store it into the DB
-      return fetch(`${url}/meetup/new`, {
+      return fetch(`/meetup/new`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -148,7 +148,7 @@ export default new Vuex.Store({
       commit("clearComments");
 
       //fetch the comments of this meetup:
-      return fetch(`${url}/comments/${payload}`, { method: "GET" })
+      return fetch(`/comments/${payload}`, { method: "GET" })
         .then(res => res.json())
         .then(comments => {
           console.log({ comments });
@@ -170,7 +170,7 @@ export default new Vuex.Store({
       } = state;
 
       // store it into the DB
-      return fetch(`${url}/meetup/${meetupId}/newcomment`, {
+      return fetch(`/meetup/${meetupId}/newcomment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -203,7 +203,7 @@ export default new Vuex.Store({
       } = state;
 
       //sending userid and meetupid by params, so we don't need a body:
-      return fetch(`${url}/user/${userId}/meetup/${payload}/assist`, {
+      return fetch(`/user/${userId}/meetup/${payload}/assist`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -230,7 +230,7 @@ export default new Vuex.Store({
       } = state;
 
       //sending userid and meetupid by params, so we don't need a body:
-      return fetch(`${url}/user/${userId}/meetup/${payload}/cancelassistance`, {
+      return fetch(`/user/${userId}/meetup/${payload}/cancelassistance`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -258,7 +258,7 @@ export default new Vuex.Store({
         body: JSON.stringify(signupData)
       };
 
-      return fetch(`${url}/signup`, requestOptions)
+      return fetch(`/signup`, requestOptions)
         .then(res => {
           commit("setLoading", false);
           return res.json();
@@ -284,7 +284,7 @@ export default new Vuex.Store({
         body: JSON.stringify(credentials)
       };
       try {
-        return fetch(`${url}/signin`, requestOptions)
+        return fetch(`/signin`, requestOptions)
           .then(res => {
             commit("setLoading", false);
             return res.json();
@@ -317,7 +317,7 @@ export default new Vuex.Store({
         user: { userId }
       } = state;
 
-      return fetch(`${url}/user/${userId}`, { method: "GET" })
+      return fetch(`/user/${userId}`, { method: "GET" })
         .then(res => res.json())
         .then(async res => {
           if (res.error) {
