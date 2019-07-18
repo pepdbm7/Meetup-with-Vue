@@ -6,6 +6,9 @@ Meetup social network app with Vue.js Vuex Node Express MongoDB (MEVN) and Vueti
 ## Preview (GIF)  
 ![gif](./client/src/assets/ezgif.com-optimize.gif)
 
+## **Link of Demo:**
+
+To use this App **[click here](https://meetup-mevn-pep.herokuapp.com)**
 
 ## Project setup
 Download or clone this repository.  
